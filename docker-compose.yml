@@ -16,7 +16,7 @@ services:
         user_name: ${DOCKER_USER}
         user_id: ${DOCKER_USER_ID}
         grp_id: ${DOCKER_GRP_ID}
-        debug: ${DEBUG}
+        debug: ${KODECUPID_DEBUG}
     env_file: 
       - .env
     user: $DOCKER_USER_ID:$DOCKER_GRP_ID
@@ -36,7 +36,7 @@ services:
         user_name: ${DOCKER_USER}
         user_id: ${DOCKER_USER_ID}
         grp_id: ${DOCKER_GRP_ID}
-        debug: ${DEBUG}
+        debug: ${KODECUPID_DEBUG}
     env_file: 
       - .env
     user: $DOCKER_USER_ID:$DOCKER_GRP_ID
