@@ -1,0 +1,42 @@
+version: '3.0'
+
+services:
+  django:
+    image: kodecupid/django
+    container_name: kodecupid-django
+    ports:
+      - 5173:5173
+    volumes:
+      - ./backend/:/files
+    working_dir: /files
+    build:
+      context: ./docker-images/django/
+      dockerfile: Dockerfile
+      args:
+        user_name: ${DOCKER_USER}
+        user_id: ${DOCKER_USER_ID}
+        grp_id: ${DOCKER_GRP_ID}
+        debug: ${DEBUG}
+    env_file: 
+      - .env
+    user: $DOCKER_USER_ID:$DOCKER_GRP_ID
+
+  vuejs:
+    image: kodecupid/vuejs
+    container_name: kodecupid-vuejs
+    ports:
+      - 80:80
+    volumes:
+      - ./frontend/:/files
+    working_dir: /files
+    build:
+      context: ./docker-images/vuejs/
+      dockerfile: Dockerfile
+      args:
+        user_name: ${DOCKER_USER}
+        user_id: ${DOCKER_USER_ID}
+        grp_id: ${DOCKER_GRP_ID}
+        debug: ${DEBUG}
+    env_file: 
+      - .env
+    user: $DOCKER_USER_ID:$DOCKER_GRP_ID
