@@ -1,0 +1,32 @@
+name: kodecupid-cd
+on:
+  push:
+    branches: 
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Configure ssh
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/deploy.key
+          chmod 600 ~/.ssh/deploy.key
+          cat >>~/.ssh/config <<END
+          Host deploy
+            HostName $SSH_HOST
+            User $SSH_USER
+            Port $SSH_PORT
+            IdentityFile ~/.ssh/deploy.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.SSH_USERNAME }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+      
+      - name : Deploy to the server
+        run: ssh deploy 'sh ~/project/kodecupid/deploy.sh ${{ secrets.SSH_PRIVATE_KEY_FILE }}'
+        
