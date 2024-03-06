@@ -3,7 +3,12 @@
 cd ${0%/*}
 root=$(pwd)
 
-git pull
+export $(cat .env | xargs)
+
+eval "$(ssh-agent -s)"
+ssh-add "$1"
+
+git pull origin main
 
 cd backend
 pipenv install --deploy
