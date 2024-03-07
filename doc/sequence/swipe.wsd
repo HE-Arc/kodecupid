@@ -1,0 +1,36 @@
+@startuml KodeCupid swipe
+title "Fonctionnement KodeCupid Swipe"
+
+participant "Front" as f
+participant "Back" as b
+
+activate f
+
+f -> b : get profile
+activate b
+b -> b : filter "looking_for"
+b -> b : filter "not liked"
+b -> b : filter "tags"
+b -> f : profile
+deactivate b
+alt user swipe right
+    f -> b : liked profile
+    activate b
+    b -> b : set as liked
+    b -> b : check for match
+    alt match
+        b -> b : create conv
+        b -> f : tell user he has new match
+    end
+    alt no match
+        b -> b : look for next profile
+        b -> f : next profile
+        deactivate b    
+    end
+end
+
+alt user swipe left
+    f -> b : get profile
+end
+
+@enduml

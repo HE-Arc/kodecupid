@@ -1,0 +1,42 @@
+@startuml MCD KodeCupid
+
+title "KodeCupid MCD"
+
+skinparam linetype ortho
+
+hide circle
+
+entity "User" as u {
+    *id : number <<generated>>
+    --
+    *name : text
+    *password : text
+    *bio : text
+    *looking_for : text
+}
+
+entity "Picture" as p {
+    *id : number <<generated>>
+    *path : text
+}
+
+entity "Tag" as t {
+    *id : number <<generated>>
+    --
+    *name : text
+}
+
+entity "Like" as l {
+    *id : number <<generated>>
+    --
+    *name : text
+    *timestamp : datetime
+}
+
+u "0..N" -- "0..N" t
+u "1..N" -- "1..1" p
+u "0..N" -- "1..1" l
+u "0..N" -- "1..1" l
+
+@enduml
+

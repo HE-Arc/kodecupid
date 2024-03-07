@@ -1,0 +1,51 @@
+@startuml MLD KodeCupid
+
+title "KodeCupid MLD"
+
+hide circle
+
+skinparam linetype ortho
+
+entity "User" as u {
+    *id : int(11) <<generated>> <<PK>>
+    --
+    *name : varchar(255)
+    *password : varchar(255)
+    *bio : varchar(255)
+    *looking_for : varchar(255)
+    *pfp : int(11) <<FK>>
+}
+
+entity "Picture" as p {
+    *id : int(11) <<generated>> <<PK>>
+    --
+    *path : varchar(255)
+}
+
+entity "Tag" as t {
+    *id : int(11) <<generated>> <<PK>>
+    --
+    *name : varchar(255)
+}
+
+entity "Like" as l {
+    *id : int(11) <<generated>> <<PK>>
+    --
+    *source_user : int(11) <<FK>>
+    *target_user : int(11) <<FK>>
+    *timestamp : datetime
+}
+
+entity "User_Tag" as ut {
+    *id : int(11) <<generated>> <<PK>>
+    --
+    *user_id : int(11) <<FK>>
+    *tag_id : int(11) <<FK>>
+}
+
+l --> u
+l --> u
+u --> p
+p --> u
+ut --> u
+ut --> t
