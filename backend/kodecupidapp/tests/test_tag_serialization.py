@@ -8,5 +8,8 @@ class TagSerializerTest(TestCase):
         self.tag = Tag.objects.create(name=self.tag_name)
 
     def test_tag_serializer(self):
+        """
+        Test tag
+        """
         serialized_tag = TagSerializer(instance=self.tag).data
         self.assertEqual(serialized_tag['name'], self.tag_name)
