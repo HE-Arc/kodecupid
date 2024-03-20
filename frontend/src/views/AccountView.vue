@@ -1,36 +1,21 @@
-<script setup>
-const imageLayout = [
-    { cols: 4 },
-    {
-        cols: 8,
-        children: [{ cols: 12 }, { cols: 12 }],
-    },
-    { cols: 6 },
-    { cols: 3 },
-    { cols: 9 },
-    { cols: 4 },
-    { cols: 8 },
-]
-</script>
-
 <template>
-    <v-card id="account" class="rounded-xl">
+    <v-card v-model="user" class="rounded-xl">
         <v-container>
             <v-row>
                 <v-col>
                     <v-img cover class="rounded-circle border border-secondary border-lg" width="100" height="100"
-                        src="https://picsum.photos/170">
+                        :src="user.avatar">
                     </v-img>
                 </v-col>
 
                 <v-col>
                     <v-card-title>{{ user.name }}</v-card-title>
                     <v-card-subtitle>{{ user.email }}</v-card-subtitle>
-                    <v-card-subtitle>{{ user.accountType }}</v-card-subtitle>
+                    <v-card-subtitle>{{ user.bio }}</v-card-subtitle>
                 </v-col>
 
                 <v-col>
-                    <v-btn>modifier mon profil</v-btn>
+                    <v-btn color="primary">modifier mon profil</v-btn>
                 </v-col>
             </v-row>
 
@@ -40,10 +25,7 @@ const imageLayout = [
                 <v-col>
                     <v-label>Tags:</v-label>
                     <v-chip-group column>
-                        <v-chip>java</v-chip>
-                        <v-chip>python</v-chip>
-                        <v-chip>javascript</v-chip>
-                        <v-chip>c++</v-chip>
+                        <v-chip v-for="tag in user.tags">{{ tag }}</v-chip>
                     </v-chip-group>
                 </v-col>
             </v-row>
@@ -67,25 +49,26 @@ const imageLayout = [
                     </v-col>
                 </template>
             </v-row>
-
-
         </v-container>
     </v-card>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            user: {
-                name: 'John Doe',
-                email: 'john@example.com',
-                accountType: 'Premium'
-            },
-        };
-    },
-    methods: {
+<script setup>
+import { store } from '@/store';
 
-    }
-};
+const user = store.user.value;
+console.log(user);
+
+const imageLayout = [
+    { cols: 4 },
+    {
+        cols: 8,
+        children: [{ cols: 12 }, { cols: 12 }],
+    },
+    { cols: 6 },
+    { cols: 3 },
+    { cols: 9 },
+    { cols: 4 },
+    { cols: 8 },
+]
 </script>

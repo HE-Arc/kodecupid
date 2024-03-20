@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.prevent="handleSubmit">
+  <v-form ref="form" @submit.prevent="handleSubmit(this)">
     <v-container>
       <v-row>
         <v-col>
@@ -32,28 +32,45 @@
   </v-form>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      email: '',
-      password: '',
-      emailRules: [
-        v => !!v || 'Email is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-      ],
-      passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length >= 6 || 'Password must be at least 6 characters'
-      ]
-    };
-  },
-  methods: {
-    handleSubmit() {
-      // Handle form submission here
-    }
-  },
+<script setup>
+import { ref } from 'vue';
+import { store } from '@/store';
+import axios from 'axios';
+import { useRouter } from 'vue-router'
 
-  name: 'SignupView',
+const email = ref(null);
+const password = ref(null);
+const emailRules = [
+  v => !!v || 'Email is required',
+  v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+];
+const passwordRules = [
+  v => !!v || 'Password is required',
+  v => v.length >= 6 || 'Password must be at least 6 characters'
+];
+
+const formData = {
+  email,
+  password
+};
+
+
+const handleSubmit = async (form) => {
+  {
+    const response = await axios.post(store.routes['USER_SIGNUP'], formData)
+    .catch((error) => {
+      if (error.response.data.email) {
+        form.emailErrors.push(error.response.data.email[0]);
+      }
+      if (error.response.data.password) {
+        form.passwordErrors.push(error.response.data.password[0]);
+      }
+    });
+
+    if (response.status === 200) {
+      store.user.value = response.data;
+      router.push({ name: 'signin' });
+    }
+  }
 };
 </script>

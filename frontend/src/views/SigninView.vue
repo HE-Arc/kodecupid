@@ -1,7 +1,3 @@
-<script setup>
-
-</script>
-
 <template>
   <v-form @submit.prevent="handleSubmit">
     <v-container>
@@ -36,28 +32,49 @@
   </v-form>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      email: '',
-      password: '',
-      emailRules: [
-        v => !!v || 'Email is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-      ],
-      passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length >= 6 || 'Password must be at least 6 characters'
-      ],
-    };
-  },
-  methods: {
-    handleSubmit() {
-      // Handle form submission here
-    }
-  },
+<script setup>
 
-  name: 'SinginView',
+import { ref } from 'vue';
+import { store } from '@/store';
+import axios from 'axios';
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const email = ref(null);
+const password = ref(null);
+const emailRules = [
+  v => !!v || 'Email is required',
+  v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+];
+const passwordRules = [
+  v => !!v || 'Password is required',
+  v => v.length >= 6 || 'Password must be at least 6 characters'
+];
+
+const formData = {
+  email,
+  password
+};
+
+const handleSubmit = async () => {
+  {
+    const response = await axios.post(store.routes['USER_SIGNIN'], formData).catch((error) => {
+      store.user.value = {
+        id: -1,
+        name: 'User not found',
+        bio: 'User not found',
+        avatar: 'https://picsum.photos/170',
+        tags: ["java", "python", "javascript", "c++"],
+      }
+
+      router.push({ name: 'home' });
+    });
+
+    if (response.status === 200) {
+      store.user.value = response.data;
+      router.push({ name: 'home' });
+    }
+  }
 };
 </script>
