@@ -165,3 +165,5 @@ frontend/package-lock.lock
 #.idea/
 
 .vscode/
+
+backend/pictures
