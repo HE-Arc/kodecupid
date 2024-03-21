@@ -1,16 +1,26 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from ..models import Like, User
 
 class LikeSerializer(serializers.ModelSerializer):
-    source_user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True, source='source_user')
     target_user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True, source='target_user')
-
-    # TODO: Change the source user when logging is gonna be handled
 
     class Meta:
         model = Like
-        fields = ['id', 'source_user_id', 'target_user_id', 'created']
+        fields = ['id', 'target_user_id', 'created']
         read_only_fields = ['id', 'created']
 
+    def validate(self, attrs):
+        user = self.context['request'].user
+        target_user = attrs['target_user']
+
+        if Like.objects.filter(source_user=user, target_user=target_user).exists():
+            raise ValidationError('You have already liked this user.')
+
+        return attrs
+
+
     def create(self, validated_data):
+        user = self.context['request'].user.id
+        validated_data['source_user_id'] = user
         return Like.objects.create(**validated_data)
