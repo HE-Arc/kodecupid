@@ -13,7 +13,7 @@
                         </v-img>
                     </v-col>
                     <v-col>
-                        <v-card-title>{{ user.name }}</v-card-title>
+                        <v-card-title>{{ user.username }}</v-card-title>
                         <v-card-text>{{ user.bio }}</v-card-text>
                     </v-col>
                 </v-row>

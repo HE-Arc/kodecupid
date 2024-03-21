@@ -34,7 +34,7 @@ const dislike = async () => {
 };
 
 const fetchUser = async () => {
-    axios.get(store.routes['USER_SEARCH'], {}).catch((error) => {
+    axios.get(store.routes['USER_LIKE'], {}).catch((error) => {
         console.error(error.response.data);
         return error
     }).then(response => {
