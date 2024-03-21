@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.prevent="handleSubmit">
+  <v-form @submit.prevent="handleSubmit" >
     <v-container>
       <v-row>
         <v-col>
@@ -8,14 +8,14 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-label>email*</v-label>
-          <v-text-field v-model="email" label="Email" type="email" :rules="emailRules" required />
+          <v-label>username*</v-label>
+          <v-text-field v-model="form.username" label="username" type="username" :rules="usernameRules" required />
         </v-col>
       </v-row>
       <v-row>
         <v-col>
           <v-label>password*</v-label>
-          <v-text-field v-model="password" label="Password" type="password" :rules="passwordRules" required />
+          <v-text-field v-model="form.password" label="Password" type="password" :rules="passwordRules" required />
         </v-col>
       </v-row>
 
@@ -33,48 +33,49 @@
 </template>
 
 <script setup>
+import { getCurrentInstance } from 'vue';
+const { appContext } = getCurrentInstance();
+const axios = appContext.config.globalProperties.$axios;
 
 import { ref } from 'vue';
 import { store } from '@/store';
-import axios from 'axios';
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
+import router from '@/router';
 
-const email = ref(null);
-const password = ref(null);
-const emailRules = [
-  v => !!v || 'Email is required',
-  v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+const form = ref({
+  username: '',
+  password: ''
+});
+
+const usernameRules = [
+  v => !!v || 'Username is required',
+  v => v.length >= 3 || 'Username must be at least 3 characters'
 ];
 const passwordRules = [
   v => !!v || 'Password is required',
   v => v.length >= 6 || 'Password must be at least 6 characters'
 ];
 
-const formData = {
-  email,
-  password
-};
 
 const handleSubmit = async () => {
   {
-    const response = await axios.post(store.routes['USER_SIGNIN'], formData).catch((error) => {
-      store.user.value = {
-        id: -1,
-        name: 'User not found',
-        bio: 'User not found',
-        avatar: 'https://picsum.photos/170',
-        tags: ["java", "python", "javascript", "c++"],
+    const jsonForm = JSON.stringify(form.value);
+    const response = await axios.post(store.routes['USER_SIGNIN'], jsonForm, {
+      headers: {
+        'Content-Type': 'application/json'
       }
-
-      router.push({ name: 'home' });
-    });
-
-    if (response.status === 200) {
-      store.user.value = response.data;
-      router.push({ name: 'home' });
-    }
+    })
+      .catch((error) => {
+        console.log(error.response);
+        return error
+      })
+      .then(response => {
+        if (response.status === 200) {
+          localStorage.setItem('accessToken', response.data.access);
+          localStorage.setItem('refreshToken', response.data.refresh);
+          router.push({ name: 'home'},{ replace: true });
+        }
+      });
   }
 };
 </script>

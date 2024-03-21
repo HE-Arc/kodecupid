@@ -38,8 +38,37 @@ const router = createRouter({
       name: 'about',
       component: () => import('@/views/AboutView.vue')
     }
-  ]
+  ],
 })
+
+
+
+// router.beforeEach((to, from, next) => {
+//   if (to.meta.requiresAuth) {
+
+//     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
+//     axios.interceptors.response.use(
+//       response => response,
+//       error => {
+//         if (error.response.status === 401) {
+//           localStorage.removeItem('accessToken');
+//           next({ name: 'signin' });
+//         }
+//         return Promise.reject(error);
+//       }
+//     )
+//     if () {
+//       // User is authenticated, allow access
+//       next();
+//     } else {
+//       // User is not authenticated, redirect to login page
+//       next({ name: 'signin' });
+//     }
+//   } else {
+//     // Route does not require authentication, allow access
+//     next();
+//   }
+// });
 
 
 export default router

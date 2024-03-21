@@ -10,6 +10,11 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import { aliases, mdi } from 'vuetify/iconsets/mdi';
 
+import axiosPluging from '@/plugins/axiosPlugin';
+
+// import axios from 'axios';
+// axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+
 const app = createApp(App);
 
 const vuetify = createVuetify({
@@ -42,7 +47,7 @@ const vuetify = createVuetify({
   },
 });
 
+app.use(axiosPluging);
 app.use(vuetify);
 app.use(router);
-
 app.mount('#app');

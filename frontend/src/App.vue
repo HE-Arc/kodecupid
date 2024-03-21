@@ -19,9 +19,3 @@ import { RouterView } from 'vue-router';
     </v-container>
   </v-app>
 </template>
-
-<script>
-export default {
-  name: 'App',
-}
-</script>

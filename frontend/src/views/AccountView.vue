@@ -2,16 +2,16 @@
     <v-card v-model="user" class="rounded-xl">
         <v-container>
             <v-row>
-                <v-col>
+                <v-col v-if="user.avatar">
                     <v-img cover class="rounded-circle border border-secondary border-lg" width="100" height="100"
                         :src="user.avatar">
                     </v-img>
                 </v-col>
 
                 <v-col>
-                    <v-card-title>{{ user.name }}</v-card-title>
-                    <v-card-subtitle>{{ user.email }}</v-card-subtitle>
-                    <v-card-subtitle>{{ user.bio }}</v-card-subtitle>
+                    <v-card-title>{{ store.user.name }}</v-card-title>
+                    <v-card-subtitle>{{ store.user.email }}</v-card-subtitle>
+                    <v-card-subtitle>{{ store.user.bio }}</v-card-subtitle>
                 </v-col>
 
                 <v-col>
@@ -55,9 +55,21 @@
 
 <script setup>
 import { store } from '@/store';
+import { getCurrentInstance } from 'vue';
 
-const user = store.user.value;
-console.log(user);
+const { appContext } = getCurrentInstance();
+const axios = appContext.config.globalProperties.$axios;
+
+const fetchUser =async ()=> {
+    const response = await axios.get(store.routes['USER']);
+    store.user.value = response.data;
+};
+
+import { onMounted } from 'vue';
+
+onMounted(() => {
+    fetchUser();
+});
 
 const imageLayout = [
     { cols: 4 },
