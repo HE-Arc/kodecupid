@@ -26,14 +26,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserConfigurationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username','password','bio','looking_for','pfp']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+        fields = ['username','bio','looking_for','pfp']
 
     def update(self, instance, validated_data):
         instance.username=validated_data.get('username', instance.username)
-        instance.set_password(validated_data.get('password', instance.password))
         instance.bio=validated_data.get('bio', instance.bio)
         instance.looking_for=validated_data.get('looking_for', instance.looking_for)
         instance.pfp=validated_data.get('pfp', instance.pfp)

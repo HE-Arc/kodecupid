@@ -57,7 +57,8 @@ const handleSubmit = async () => {
   const jsonForm = JSON.stringify(form.value);
   axios.post(store.routes['USER_SIGNUP'], jsonForm, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': "anonymous"
     }}
     , {  })
     .catch((error) => {

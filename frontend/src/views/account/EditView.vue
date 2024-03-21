@@ -105,7 +105,7 @@ const handleSubmit = async () => {
 
     const jsonForm = JSON.stringify(user.value);
 
-    axios.put(store.routes['USER_DETAIL'], jsonForm, {
+    axios.patch(store.routes['USER_DETAIL'], jsonForm, {
         headers: {
             'Content-Type': 'application/json'
         }
