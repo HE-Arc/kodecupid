@@ -1,3 +1,4 @@
-from .user import RegisterView
-from .tag import TagListView
 from .like import LikeCreateView
+from .user import UserView
+from .tag import TagListView
+from .picture import PictureView
