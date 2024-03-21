@@ -36,3 +36,27 @@ class LikeSerializerTestCase(TestCase):
         }
         serializer = LikeSerializer(data=data, context={'request': request})
         self.assertFalse(serializer.is_valid())
+
+
+    def test_match_detection(self):
+
+        # User1 likes User2
+        request_user1_likes_user2 = self.factory.post('/fake-url')
+        request_user1_likes_user2.user = self.user1
+        serializer_user1_likes_user2 = LikeSerializer(data={'target_user_id': self.user2.pk}, context={'request': request_user1_likes_user2})
+        if serializer_user1_likes_user2.is_valid():
+            serializer_user1_likes_user2.save()
+        
+        # User2 likes User1, expecting a match
+        request_user2_likes_user1 = self.factory.post('/another-fake-url')
+        request_user2_likes_user1.user = self.user2
+        serializer_user2_likes_user1 = LikeSerializer(data={'target_user_id': self.user1.pk}, context={'request': request_user2_likes_user1})
+        
+        if serializer_user2_likes_user1.is_valid():
+            serializer_user2_likes_user1.save()
+
+            match_exists = Like.objects.filter(source_user=self.user2, target_user=self.user1).exists() and Like.objects.filter(source_user=self.user1, target_user=self.user2).exists()
+
+            self.assertTrue(match_exists)
+
+            self.assertEqual(Like.objects.count(), 2)
