@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.prevent="handleSubmit(this)">
+  <v-form id="signup-form" @submit.prevent="handleSubmit" @keyup.native.enter="valid && submit($event)">
     <v-container>
       <v-row>
         <v-col>
@@ -9,7 +9,7 @@
       <v-row>
         <v-col>
           <v-label>username*</v-label>
-          <v-text-field v-model="form.username" label="username" type="username" :rules="usernameRules" required />
+          <v-text-field v-model="form.username" label="username" type="username" :rules="usernameRules" required  focused/>
         </v-col>
       </v-row>
       <v-row>
@@ -21,7 +21,7 @@
 
       <v-row>
         <v-col>
-          <v-btn type="submit" color="primary">Register</v-btn>
+          <v-btn type="submit" color="primary" form="signup-form">Register</v-btn>
         </v-col>
         <v-col class="d-flex">
           <v-label class="mr-4">Already have an account?</v-label>
@@ -54,24 +54,22 @@ const passwordRules = [
 
 
 const handleSubmit = async () => {
-  {
-    const jsonForm = JSON.stringify(form.value);
-    const response = await axios.post(store.routes['USER_SIGNUP'], jsonForm, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
+  const jsonForm = JSON.stringify(form.value);
+  axios.post(store.routes['USER_SIGNUP'], jsonForm, {
+    headers: {
+      'Content-Type': 'application/json'
+    }}
+    , {  })
+    .catch((error) => {
+      console.error(error.response.data);
+      return error
     })
-      .catch((error) => {
-        console.log(error.response.data);
-        return error
-      })
-      .then(response => {
-        console.log(response);
-        if (response.status === 201) {
-          localStorage.setItem('uninitialized', true);
-          router.push('signin',{ replace: true });
-        }
-      });
-  }
+    .then(response => {
+      console.log(response);
+      if (response.status === 201) {
+        localStorage.setItem('uninitialized', true);
+        router.push({ name: 'signin', replace: true, force: true});
+      }
+    });
 };
 </script>

@@ -11,64 +11,53 @@ const router = createRouter({
     {
       path: '/search',
       name: 'search',
-      component: () => import('@/views/SearchView.vue')
+      component: () => import('@/views/cupid/SearchView.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/match',
       name: 'match',
-      component: () => import('@/views/MatchView.vue')
+      component: () => import('@/views/cupid/MatchView.vue'),
+      meta: { requiresAuth: true } 
     },
     {
-      path: '/signup',
-      name: 'signup',
-      component: () => import('@/views/SignupView.vue')
-    },
-    {
-      path: '/signin',
-      name: 'signin',
-      component: () => import('@/views/SigninView.vue')
+      path: '/authentication',
+      name: 'authentication',
+      component: () => import('@/views/authentication/AuthenticationView.vue'),
+      children: [
+        { path: '', name: 'signin', component: () => import('@/views/authentication/SigninView.vue') },
+        { path: 'signup', name: 'signup', component: () => import('@/views/authentication/SignupView.vue') },
+      ]
     },
     {
       path: '/account',
       name: 'account',
-      component: () => import('@/views/AccountView.vue')
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: () => import('@/views/AboutView.vue')
+      component: () => import('@/views/account/AccountView.vue'),
+      meta: { requiresAuth: true },
+      children: [
+        { path: '', name: 'account-show', component: () => import('@/views/account/ShowView.vue') },
+        { path: 'edit',name: 'account-edit', component: () => import('@/views/account/EditView.vue') }
+      ]
     }
   ],
 })
 
-
-
-// router.beforeEach((to, from, next) => {
-//   if (to.meta.requiresAuth) {
-
-//     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
-//     axios.interceptors.response.use(
-//       response => response,
-//       error => {
-//         if (error.response.status === 401) {
-//           localStorage.removeItem('accessToken');
-//           next({ name: 'signin' });
-//         }
-//         return Promise.reject(error);
-//       }
-//     )
-//     if () {
-//       // User is authenticated, allow access
-//       next();
-//     } else {
-//       // User is not authenticated, redirect to login page
-//       next({ name: 'signin' });
-//     }
-//   } else {
-//     // Route does not require authentication, allow access
-//     next();
-//   }
-// });
-
+router.beforeEach((to, from, next) => {
+  // Check if the route requires authentication
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // Check if the user is authenticated (e.g., by checking if the JWT token exists)
+    const jwtToken = localStorage.getItem('accessToken');
+    if (!jwtToken) {
+      // If the user is not authenticated, redirect to the login page
+      next({ name: 'signin', query: { redirect: to.fullPath } });
+    } else {
+      // If the user is authenticated, proceed to the route
+      next();
+    }
+  } else {
+    // If the route doesn't require authentication, proceed to the route
+    next();
+  }
+});
 
 export default router

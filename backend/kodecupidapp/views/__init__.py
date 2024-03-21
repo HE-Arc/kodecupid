@@ -1,2 +1,2 @@
-from .user import RegisterView
+from .user import *
 from .tag import TagListView

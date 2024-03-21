@@ -7,7 +7,7 @@ import { RouterView } from 'vue-router';
   <v-app>
     <v-container>
       <v-row justify="center">
-        <v-col cols="12" sm="9" md="10" lg="7" xl="7">
+        <v-col cols="12" sm="10" md="9" lg="6" xl="6">
           <v-main>
             <RouterView />
           </v-main>

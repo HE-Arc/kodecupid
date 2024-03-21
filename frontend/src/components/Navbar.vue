@@ -1,11 +1,5 @@
 <template>
     <v-bottom-navigation v-model="value" :bg-color="color()" mode="shift" grow>
-        <v-btn :to="{ name: 'home' }">
-            <v-icon aria-hidden="false">
-                mdi-home
-            </v-icon>
-            <span>Home</span>
-        </v-btn>
 
         <v-btn :to="{ name: 'search' }">
             <v-icon aria-hidden="false">
@@ -21,29 +15,31 @@
             <span>Match</span>
         </v-btn>
 
-        <v-btn :to="{ name: 'account' }">
+        <v-btn :to="{ name: 'account-show' }">
             <v-icon aria-hidden="false">
                 mdi-account
             </v-icon>
             <span>Account</span>
         </v-btn>
-
-        <v-btn :to="{ name: 'signin' }">
+        
+        <v-btn @click="logout()" v-if="checkAuth()">
             <v-icon aria-hidden="false">
-                mdi-account
+                mdi-logout
+            </v-icon>
+            <span>Logout</span>
+        </v-btn>
+        <v-btn v-else :to="{ name: 'signin' }">
+            <v-icon aria-hidden="false">
+                mdi-login
             </v-icon>
             <span>Signin</span>
-        </v-btn>
-
-        <v-btn :to="{ name: 'about' }">
-            <v-icon aria-hidden="false">mdi-information</v-icon>
-            <span>About</span>
         </v-btn>
     </v-bottom-navigation>
 
 </template>
 
 <script>
+import router from '@/router';
 export default {
     name: 'Navbar',
     data() {
@@ -61,7 +57,17 @@ export default {
                 case 4: return 'orange'
                 default: return 'blue-grey'
             }
+        },
+        logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            router.push({ name: 'signin', replace: true, force: true });
+        },
+        checkAuth() {
+            const token = localStorage.getItem('accessToken');
+            return token !== null;
         }
+
     }
 };
 </script>

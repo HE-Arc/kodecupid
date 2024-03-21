@@ -17,8 +17,9 @@ export const API_ROUTES = {
     USER_SIGNUP: API_SERVER_URL+'/api/user/register/',
     USER_SIGNIN: API_SERVER_URL+'/api/token/',
     USER_TOKEN_REFRESH: API_SERVER_URL+'/api/token/refresh/',
+    USER_DETAIL: API_SERVER_URL+'/api/user/',
 
-    ACCOUNT: API_SERVER_URL+'/account',
+    TAG_LIST: API_SERVER_URL+'/api/tags/',
 
 };
 

@@ -30,21 +30,16 @@ const like = async () => {
 };
 
 const dislike = async () => {
-    axios.put(store.routes['DISLIKE'], { user_id: store.user.id });
+    fetchUser();
 };
 
 const fetchUser = async () => {
-    try {
-        user.value = await axios.get(store.routes['USER_SEARCH'], {});
-    }
-    catch (e) {
-        user.value = {
-            id: -1,
-            name: 'User not found',
-            bio: 'User not found',
-            avatar: 'https://picsum.photos/170'
-        };
-    }
+    axios.get(store.routes['USER_SEARCH'], {}).catch((error) => {
+        console.error(error.response.data);
+        return error
+    }).then(response => {
+        user.value = response.data;
+    });
 };
 
 onMounted(() => {

@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.prevent="handleSubmit" >
+  <v-form id="signin-form" @submit.prevent="handleSubmit" @keyup.native.enter="valid && submit($event)">
     <v-container>
       <v-row>
         <v-col>
@@ -9,7 +9,8 @@
       <v-row>
         <v-col>
           <v-label>username*</v-label>
-          <v-text-field v-model="form.username" label="username" type="username" :rules="usernameRules" required />
+          <v-text-field v-model="form.username" label="username" type="username" :rules="usernameRules" required
+            focused />
         </v-col>
       </v-row>
       <v-row>
@@ -21,7 +22,7 @@
 
       <v-row>
         <v-col>
-          <v-btn type="submit" color="primary">signin</v-btn>
+          <v-btn type="submit" color="primary" form="signin-form">signin</v-btn>
         </v-col>
         <v-col class="d-flex">
           <v-label class="mr-4">Need an account?</v-label>
@@ -33,14 +34,14 @@
 </template>
 
 <script setup>
-import { getCurrentInstance } from 'vue';
-const { appContext } = getCurrentInstance();
-const axios = appContext.config.globalProperties.$axios;
+import axios from 'axios';
 
 import { ref } from 'vue';
 import { store } from '@/store';
 
 import router from '@/router';
+
+const uninitialized = ref(localStorage.getItem('uninitialized'));
 
 const form = ref({
   username: '',
@@ -57,25 +58,32 @@ const passwordRules = [
 ];
 
 
-const handleSubmit = async () => {
-  {
-    const jsonForm = JSON.stringify(form.value);
-    const response = await axios.post(store.routes['USER_SIGNIN'], jsonForm, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
+const handleSubmit = async  () => {
+  const jsonForm = JSON.stringify(form.value);
+
+  axios.post(store.routes['USER_SIGNIN'], jsonForm, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `anonymous`
+    }
+  })
+    .catch((error) => {
+      console.error(error.response.data);
+      return error
     })
-      .catch((error) => {
-        console.log(error.response);
-        return error
-      })
-      .then(response => {
-        if (response.status === 200) {
-          localStorage.setItem('accessToken', response.data.access);
-          localStorage.setItem('refreshToken', response.data.refresh);
-          router.push({ name: 'home'},{ replace: true });
+    .then(response => {
+      if (response.status === 200) {
+        localStorage.setItem('accessToken', response.data.access);
+        localStorage.setItem('refreshToken', response.data.refresh);
+        if (uninitialized.value) {
+          router.push({ name: 'account-edit',replace: true, force: true });
         }
-      });
-  }
+        else {
+          router.push({ name: 'account-show',replace: true, force: true });
+        }
+        
+      }
+    });
 };
+
 </script>
