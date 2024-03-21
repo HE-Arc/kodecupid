@@ -30,26 +30,36 @@ class UserView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def get(self, request):
-        id = request.data["id"]
-        if id == "random":
-            try:
-                users = User.objects.all()
-                user = random.choice(users)
-                # while loop not safe if only 1 user (infinite loop)
-                while user.id == request.user.id:
-                    user = random.choice(users) 
-                serializer = UserSerializer(user, many=False)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except:
-                return Response({"message": "No random user could be found."}, status=status.HTTP_404_NOT_FOUND)
+        if "id" in request.data:
+            id = request.data["id"]
 
+            if id == "random":
+                try:
+                    users = User.objects.all()
+                    user = random.choice(users)
+                    # while loop not safe if only 1 user (infinite loop)
+                    while user.id == request.user.id:
+                        user = random.choice(users) 
+                    serializer = UserSerializer(user, many=False)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                except:
+                    return Response({"message": "No random user could be found."}, status=status.HTTP_404_NOT_FOUND)
+
+            else:
+                if User.objects.filter(id = id).exists():
+                    user = User.objects.get(id = id)
+                    serializer = UserSerializer(user, many=False)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
         else:
+            id = request.user.id
             if User.objects.filter(id = id).exists():
                 user = User.objects.get(id = id)
                 serializer = UserSerializer(user, many=False)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
             
     def delete(self, request):
         id = int(request.data["id"])
