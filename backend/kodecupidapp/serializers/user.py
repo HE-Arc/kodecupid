@@ -1,7 +1,13 @@
 from rest_framework import serializers
+from ..models import User
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username','bio','looking_for','pfp']
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,7 +33,7 @@ class UserConfigurationSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.username=validated_data.get('username', instance.username)
-        instance.password=validated_data.get('password', instance.password)
+        instance.set_password(validated_data.get('password', instance.password))
         instance.bio=validated_data.get('bio', instance.bio)
         instance.looking_for=validated_data.get('looking_for', instance.looking_for)
         instance.pfp=validated_data.get('pfp', instance.pfp)
