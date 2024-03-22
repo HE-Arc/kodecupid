@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from kodecupidapp.views import UserView, TagListView, PictureView, LikeCreateView
+from kodecupidapp.views import UserView, TagView, PictureView, LikeView, UserTagView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/user/', UserView.as_view(), name='user'),
     path('api/picture/', PictureView.as_view(), name='picture'),
-    path('api/tags/', TagListView.as_view(), name='tag-list'),
-    path('api/like/', LikeCreateView.as_view(), name='like-create')
+    path('api/tags/', TagView.as_view(), name='tag-list'),
+    path('api/like/', LikeView.as_view(), name='like-create'),
+    path('api/user/tags', UserTagView.as_view(), name='user-tag')
 ]

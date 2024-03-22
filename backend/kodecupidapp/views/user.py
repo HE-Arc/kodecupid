@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from ..models import User
-from ..serializers import UserSerializer, UserRegistrationSerializer, UserConfigurationSerializer
+from ..models import User, Tag
+from ..serializers import UserSerializer, UserRegistrationSerializer, UserConfigurationSerializer, TagSerializer
 
 import random
 
@@ -70,3 +70,15 @@ class UserView(APIView):
                 return Response({"message": "User successfully deleted."},status=status.HTTP_204_NO_CONTENT)
             return Response({"message": "User cannot be deleted."}, status=status.HTTP_403_FORBIDDEN)
         return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+
+class UserTagView(APIView):
+
+    def get(self, request):
+        user = request.user
+
+        tags = Tag.objects.filter(users=user)
+
+        serializer = TagSerializer(tags, many=True)
+
+        return Response(serializer.data)
