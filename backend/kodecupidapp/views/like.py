@@ -4,7 +4,7 @@ from rest_framework import status
 from ..serializers import LikeSerializer
 from ..models import Like
 
-class LikeCreateView(APIView):
+class LikeView(APIView):
 
     def post(self, request):
         serializer = LikeSerializer(data=request.data, context={'request': request})

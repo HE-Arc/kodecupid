@@ -5,34 +5,34 @@
             <v-icon aria-hidden="false">
                 mdi-magnify
             </v-icon>
-            <span>Search</span>
+            <span>Recherche</span>
         </v-btn>
 
         <v-btn :to="{ name: 'match' }">
             <v-icon aria-hidden="false">
                 mdi-robot-love
             </v-icon>
-            <span>Match</span>
+            <span>Matchs</span>
         </v-btn>
 
         <v-btn :to="{ name: 'account-show' }">
             <v-icon aria-hidden="false">
                 mdi-account
             </v-icon>
-            <span>Account</span>
+            <span>Ton compte</span>
         </v-btn>
         
         <v-btn @click="logout()" v-if="checkAuth()">
             <v-icon aria-hidden="false">
                 mdi-logout
             </v-icon>
-            <span>Logout</span>
+            <span>Déconnexion</span>
         </v-btn>
         <v-btn v-else :to="{ name: 'signin' }">
             <v-icon aria-hidden="false">
                 mdi-login
             </v-icon>
-            <span>Signin</span>
+            <span>Connexion</span>
         </v-btn>
     </v-bottom-navigation>
 

@@ -31,10 +31,10 @@
         </v-row>
         <v-row>
             <v-col class="d-flex justify-center">
-                <v-btn color="primary" :to="{ name: 'signin' }">Connecte toi</v-btn>
+                <v-btn color="primary" :to="{ name: 'signin' }">Connecte-toi</v-btn>
             </v-col>
             <v-col class="d-flex justify-center">
-                <v-btn color="primary" :to="{ name: 'signup' }">crée un compte</v-btn>
+                <v-btn color="primary" :to="{ name: 'signup' }">Crée un compte</v-btn>
             </v-col>
         </v-row>
         <v-divider class="my-4"></v-divider>
@@ -43,13 +43,13 @@
                 <h1><v-icon color="blue">mdi-shield-crown</v-icon>L'équipe</h1>
                 <v-list>
                     <v-list-item>
-                        <p><v-icon color="blue">mdi-shield-sword</v-icon> Lucas Gosteli</p>
+                        <p><v-icon color="blue">mdi-shield-sword</v-icon>Lucas Gosteli</p>
                     </v-list-item>
                     <v-list-item>
-                        <p><v-icon color="blue">mdi-shield-sword</v-icon>Danien Tschan</p>
+                        <p><v-icon color="blue">mdi-shield-sword</v-icon>Damien Tschan</p>
                     </v-list-item>
                     <v-list-item>
-                        <p><v-icon color="blue">mdi-shield-sword</v-icon>Bruno Tomas</p>
+                        <p><v-icon color="blue">mdi-shield-sword</v-icon>Bruno Thomas</p>
                     </v-list-item>
                 </v-list>
             </v-col>

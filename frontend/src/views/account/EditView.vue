@@ -10,14 +10,14 @@
                     </v-col>
 
                     <v-col>
-                        <v-btn form="edit-form" type="submit" color="primary" class="mr-4">enregistrer</v-btn>
+                        <v-btn form="edit-form" type="submit" color="primary" class="mr-4">Enregistrer</v-btn>
                         <v-btn v-if="uninitialized" :to="{ name: 'account-show' }"><v-icon> mdi-cancel</v-icon></v-btn>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
                         <v-card-title>
-                            <v-text-field v-model="user.username" label="username" type="username"
+                            <v-text-field v-model="user.username" label="Nom d'utilisateur" type="username"
                                 :value="user.username" :rules="usernameRules" required />
                         </v-card-title>
                     </v-col>
@@ -25,14 +25,14 @@
                 <v-row>
                     <v-col>
                         <v-card-subtitle>
-                            <v-text-field v-model="user.bio" label="bio" type="bio" :rules="bioRules" :value="user.bio" required />
+                            <v-text-field v-model="user.bio" label="Bio" type="bio" :rules="bioRules" :value="user.bio" required />
                         </v-card-subtitle>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
                         <v-card-subtitle>
-                            <v-text-field v-model="user.looking_for" :rules="looking_forRules" label="préférences de recherche" type="looking_for"
+                            <v-text-field v-model="user.looking_for" :rules="looking_forRules" label="Préférences de recherche" type="looking_for"
                                 :value="user.looking_for" required />
                         </v-card-subtitle>
                     </v-col>
@@ -51,7 +51,7 @@
                             <v-chip @click="openTagList"><v-icon>mdi-plus</v-icon></v-chip>
 
                             <v-list v-if="showTagList" class="tag-list">
-                                <v-text-field v-model="search" label="Search" outlined dense
+                                <v-text-field v-model="search" label="Rechercher" outlined dense
                                     hide-details></v-text-field>
                                 <v-list-item v-for="tag in filteredTags()" :key="tag" @click="addTag(tag)">
                                     <v-list-item-title>{{ tag.name }}</v-list-item-title>
@@ -80,27 +80,28 @@ const user = ref({
     tags: ref([])
 });
 
-const tags = ref([]);
+const all_tags = [];
+const list_tags = ref([]);
+
 const showTagList = ref(false);
 const search = ref('');
 const uninitialized = ref(localStorage.getItem('uninitialized'));
 
 const usernameRules = [
-    v => !!v || 'Username is required',
-    v => v.length >= 3 || 'Username must be at least 3 characters'
+    v => !!v || 'Le nom d\'utilisateur est obligatoire',
+    v => v.length >= 3 || 'Le nom d\'utilisateur doit contenir min. 3 caractères'
 ];
 
 const bioRules = [
-    v => !!v || 'Bio is required',
+    v => !!v || 'La description (bio) est obligatoire',
 ];
 
 const looking_forRules = [
-    v => !!v || 'Looking for is required',
-    v => v.length >= 3 || 'Looking for must be at least 3 characters'
+    v => !!v || 'Vos préférences de recherche sont obligatoires',
+    v => v.length >= 3 || 'Vos préférences de recherche doivent contenir min. 3 caractères'
 ];
 
 const handleSubmit = async () => {
-    console.log(uninitialized.value);
     user.value.tags = user.value.tags?.map(tag => tag.id);
 
     const jsonForm = JSON.stringify(user.value);
@@ -120,7 +121,7 @@ const handleSubmit = async () => {
 };
 
 const fetchUser = async () => {
-    const response = await axios.get(store.routes['USER_DETAIL']).catch((error) => {
+    axios.get(store.routes['USER_DETAIL']).catch((error) => {
         console.error(error.response.data);
         return error
     }).then(response => {
@@ -129,17 +130,27 @@ const fetchUser = async () => {
 };
 
 const fetchTags = async () => {
-    const response = await axios.get(store.routes['TAG_LIST']).catch((error) => {
+    axios.get(store.routes['TAG_LIST']).catch((error) => {
         console.error(error.response.data);
         return error
     }).then(response => {
-        tags.value = response.data;
+        all_tags.push(...response.data);
+    });
+};
+
+const fetchUserTags = async () => {
+    axios.get(store.routes['USER_TAGS']).catch((error) => {
+        console.error(error.response.data);
+        return error
+    }).then(response => {
+        user.value.tags = response.data;
     });
 };
 
 onMounted(() => {
     fetchUser();
     fetchTags();
+    fetchUserTags();
 });
 
 computed(() => {
@@ -159,7 +170,11 @@ watch(search, () => {
 
 
 const filteredTags = () => {
-    return tags.value.filter(tag =>
+    const all_tags_ids = all_tags.map((tag) => tag.id);
+    const user_tags_ids = user.value.tags.map((tag) => tag.id);
+    const all_tags_not_in_user = all_tags_ids.filter((tag) => !user_tags_ids.includes(tag));
+    const filtered_tags = all_tags.filter((tag) => all_tags_not_in_user.includes(tag.id));
+    return filtered_tags.filter(tag =>
         tag.name.toLowerCase().includes(search.value.toLowerCase())
     );
 }
@@ -169,12 +184,27 @@ const openTagList = () => {
 };
 
 const addTag = (tag) => {
-    user.value.tags.push(tag);
+    axios.post(store.routes['USER_TAG_ADD'], JSON.stringify(tag))
+        .catch((error) => {
+            console.error(error.response.data);
+            return error
+        }).then(response => {
+            user.value.tags.push(tag);
+            list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
+        });
+
     showTagList.value = false;
     search.value = '';
 }
 
 const deleteTag = (tag) => {
     user.value.tags = user.value.tags.filter((t) => t.id !== tag.id);
+    axios.delete(store.routes['USER_TAG_REMOVE'], { data: JSON.stringify(tag) })
+        .catch((error) => {
+            console.error(error.response.data);
+            return error
+        }).then(response => {
+            list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
+        });
 }
 </script>
