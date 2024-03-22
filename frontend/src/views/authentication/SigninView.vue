@@ -74,6 +74,7 @@ const handleSubmit = async  () => {
     .then(response => {
       if (response.status === 200) {
         localStorage.setItem('accessToken', response.data.access);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
         localStorage.setItem('refreshToken', response.data.refresh);
         if (uninitialized.value) {
           router.push({ name: 'account-edit',replace: true, force: true });

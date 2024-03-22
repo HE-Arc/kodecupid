@@ -26,7 +26,10 @@ import axios from 'axios';
 const user = ref({});
 
 const like = async () => {
-    axios.put(store.routes['LIKE'], { user_id: store.user.id });
+    axios.post(store.routes['USER_LIKE'], { target_user_id: user.value.id })
+    .then(response => {
+        fetchUser();
+    });
 };
 
 const dislike = async () => {
@@ -34,7 +37,7 @@ const dislike = async () => {
 };
 
 const fetchUser = async () => {
-    axios.get(store.routes['USER_LIKE'], {}).catch((error) => {
+    axios.get(store.routes['USER_SEARCH'], {params : {id : "random"}}).catch((error) => {
         console.error(error.response.data);
         return error
     }).then(response => {
