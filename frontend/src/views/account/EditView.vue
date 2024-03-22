@@ -80,7 +80,9 @@ const user = ref({
     tags: ref([])
 });
 
-const tags = ref([]);
+const all_tags = ref({})
+const list_tags = ref([]);
+
 const showTagList = ref(false);
 const search = ref('');
 const uninitialized = ref(localStorage.getItem('uninitialized'));
@@ -133,13 +135,23 @@ const fetchTags = async () => {
         console.error(error.response.data);
         return error
     }).then(response => {
-        tags.value = response.data;
+        all_tags.value = response.data;
+    });
+};
+
+const fetchUserTags = async () => {
+    const response = await axios.get(store.routes['USER_TAGS']).catch((error) => {
+        console.error(error.response.data);
+        return error
+    }).then(response => {
+        user.value.tags = response.data;
     });
 };
 
 onMounted(() => {
     fetchUser();
     fetchTags();
+    fetchUserTags();
 });
 
 computed(() => {
@@ -159,7 +171,9 @@ watch(search, () => {
 
 
 const filteredTags = () => {
-    return tags.value.filter(tag =>
+    // list_tags.value = all_tags.value.filter((tag) => !user.value.tags.value.includes(tag))
+    console.log(list_tags.value);
+    return list_tags.value.filter(tag =>
         tag.name.toLowerCase().includes(search.value.toLowerCase())
     );
 }
@@ -168,8 +182,16 @@ const openTagList = () => {
     showTagList.value = true; // Show the tag list
 };
 
-const addTag = (tag) => {
-    user.value.tags.push(tag);
+const addTag = (tag) => {    
+    axios.post(store.routes['TAG_ADD'], {tag_id : tag.id})
+    .catch((error) => {
+        console.error(error.response.data);
+        return error
+    }).then(response => {
+        user.value.tags.push(tag);
+        list_tags.value = all_tags.value.filter((tag) => !user.value.tags.includes(tag))
+    });
+
     showTagList.value = false;
     search.value = '';
 }
