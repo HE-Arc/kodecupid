@@ -8,10 +8,10 @@
         <v-row v-else>
             <v-col>
                 <v-container class="d-flex flex-column align-center">
-                    <v-label>Aucune connection n'a encore été trouver </v-label>
+                    <v-label>Aucune connexion n'a encore été trouvée</v-label>
                     <v-icon color="red" class="my-4 text-h1">mdi-heart-broken</v-icon>
-                    <v-label>Mais ne vous découragez pas!</v-label>
-                    <v-label>Vous finirez par trouver cette connection spéciale</v-label>
+                    <v-label>Mais ne vous découragez pas !</v-label>
+                    <v-label>Vous finirez par trouver cette connection spéciale ;)</v-label>
                 </v-container>
             </v-col>
         </v-row>

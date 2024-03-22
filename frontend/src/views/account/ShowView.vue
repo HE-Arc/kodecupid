@@ -15,7 +15,7 @@
                 </v-col>
 
                 <v-col>
-                    <v-btn :to="{ name: 'account-edit' }" color="primary">modifier mon profil</v-btn>
+                    <v-btn :to="{ name: 'account-edit' }" color="primary">Modifier mon profil</v-btn>
                 </v-col>
             </v-row>
 

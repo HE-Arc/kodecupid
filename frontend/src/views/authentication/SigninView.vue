@@ -8,25 +8,25 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-label>username*</v-label>
-          <v-text-field v-model="form.username" label="username" type="username" :rules="usernameRules" required
+          <v-label>Nom d'utilisateur</v-label>
+          <v-text-field v-model="form.username" label="Nom d'utilisateur" type="username" :rules="usernameRules" required
             focused />
         </v-col>
       </v-row>
       <v-row>
         <v-col>
-          <v-label>password*</v-label>
-          <v-text-field v-model="form.password" label="Password" type="password" :rules="passwordRules" required />
+          <v-label>Mot de passe</v-label>
+          <v-text-field v-model="form.password" label="Mot de passe" type="password" :rules="passwordRules" required />
         </v-col>
       </v-row>
 
       <v-row>
         <v-col>
-          <v-btn type="submit" color="primary" form="signin-form">signin</v-btn>
+          <v-btn type="submit" color="primary" form="signin-form">Se connecter</v-btn>
         </v-col>
         <v-col class="d-flex">
-          <v-label class="mr-4">Need an account?</v-label>
-          <v-btn flat class="text-primary" :to="{ name: 'signup' }">Singnup</v-btn>
+          <v-label class="mr-4">Tu n'as pas de compte ?</v-label>
+          <v-btn flat class="text-primary" :to="{ name: 'signup' }">S'inscrire</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -49,12 +49,12 @@ const form = ref({
 });
 
 const usernameRules = [
-  v => !!v || 'Username is required',
-  v => v.length >= 3 || 'Username must be at least 3 characters'
+  v => !!v || 'Le nom d\'utilisateur est obligatoire',
+  v => v.length >= 3 || 'Le nom d\'utilisateur doit contenir min. 3 caractères'
 ];
 const passwordRules = [
-  v => !!v || 'Password is required',
-  v => v.length >= 6 || 'Password must be at least 6 characters'
+  v => !!v || 'Le mot de passe est obligatoire',
+  v => v.length >= 6 || 'Le mot de passe doit contenir min. 6 caractères'
 ];
 
 
