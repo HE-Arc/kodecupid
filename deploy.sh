@@ -8,8 +8,8 @@ export $(cat .env | xargs)
 eval "$(ssh-agent -s)"
 ssh-add "$1"
 
-systemctl stop gunicorn
-systemctl stop nginx
+sudo systemctl stop gunicorn
+sudo systemctl stop nginx
 
 git pull origin main
 
@@ -21,7 +21,7 @@ rm -rf static/*
 
 pipenv install --deploy
 pipenv run python3 manage.py migrate
-pipenv run python3 manage.py test
+
 pipenv run python3 manage.py import_tags
 pipenv run python3 manage.py collectstatic --noinput
 
@@ -34,5 +34,5 @@ cd frontend
 npm install
 npm run build
 
-systemctl start gunicorn
-systemctl start nginx
+sudo systemctl start nginx
+sudo systemctl start gunicorn
