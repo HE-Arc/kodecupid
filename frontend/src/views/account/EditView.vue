@@ -67,6 +67,7 @@
 
 <script setup>
 import { store } from '@/store';
+import { setError } from '@/store';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 import axios from 'axios';
@@ -112,9 +113,11 @@ const handleSubmit = async () => {
         }
     }, { withCredentials: true }).catch((error) => {
         console.error(error.response.data);
+        setError(error.response.data,'error');
         return error
     }).then(response => {
         uninitialized.value = false;
+        setError({message:'L\'utilisateur a été mis à jour'},'success');
         localStorage.setItem('uninitialized', false);
         router.push({ name: 'account-show', replace: true, force: true });
     });
@@ -123,6 +126,7 @@ const handleSubmit = async () => {
 const fetchUser = async () => {
     axios.get(store.routes['USER_DETAIL']).catch((error) => {
         console.error(error.response.data);
+        setError(error.response.data,'error');
         return error
     }).then(response => {
         user.value = response.data;
@@ -132,6 +136,7 @@ const fetchUser = async () => {
 const fetchTags = async () => {
     axios.get(store.routes['TAG_LIST']).catch((error) => {
         console.error(error.response.data);
+        setError(error.response.data,'error');
         return error
     }).then(response => {
         all_tags.push(...response.data);
@@ -141,6 +146,7 @@ const fetchTags = async () => {
 const fetchUserTags = async () => {
     axios.get(store.routes['USER_TAGS']).catch((error) => {
         console.error(error.response.data);
+        setError(error.response.data,'error');
         return error
     }).then(response => {
         user.value.tags = response.data;
@@ -187,6 +193,7 @@ const addTag = (tag) => {
     axios.post(store.routes['USER_TAG_ADD'], JSON.stringify(tag))
         .catch((error) => {
             console.error(error.response.data);
+            setError(error.response.data,'error');
             return error
         }).then(response => {
             user.value.tags.push(tag);
@@ -202,6 +209,7 @@ const deleteTag = (tag) => {
     axios.delete(store.routes['USER_TAG_REMOVE'], { data: JSON.stringify(tag) })
         .catch((error) => {
             console.error(error.response.data);
+            setError(error.response.data,'error');
             return error
         }).then(response => {
             list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))

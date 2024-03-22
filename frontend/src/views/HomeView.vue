@@ -1,5 +1,5 @@
 <template>
-    <v-container >
+    <v-container>
         <v-row>
             <v-col>
                 <v-img cover class="rounded" src="/logo1024.png"></v-img>
@@ -20,7 +20,9 @@
         <v-row>
             <v-col>
                 <p>
-                    Faites la rencontre de personnes qui partagent votre amour pour la tech et le coding sur KodeCupid. Qui sait, vous pourriez bien trouver votre binôme de code idéal... ou pas ! Mais bon, ça vaut le coup d'essayer.
+                    Faites la rencontre de personnes qui partagent votre amour pour la tech et le coding sur KodeCupid.
+                    Qui sait, vous pourriez bien trouver votre binôme de code idéal... ou pas ! Mais bon, ça vaut le
+                    coup d'essayer.
                 </p>
             </v-col>
         </v-row>
@@ -29,7 +31,7 @@
                 <v-img cover class="rounded-lg" src="/jdg-joueur-du-grenier.gif"></v-img>
             </v-col>
         </v-row>
-        <v-row>
+        <v-row v-if="checkAuth()">
             <v-col class="d-flex justify-center">
                 <v-btn color="primary" :to="{ name: 'signin' }">Connecte-toi</v-btn>
             </v-col>
@@ -57,3 +59,9 @@
     </v-container>
 
 </template>
+
+<script setup>
+const checkAuth = () =>{
+    return localStorage.getItem('accessToken') === null;
+}
+</script>

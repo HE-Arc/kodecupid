@@ -20,13 +20,18 @@
 import { onMounted, ref } from 'vue';
 import PeopleCard from '@/components/PeopleCard.vue';
 
+
 import { store } from '@/store';
+import { setError } from '@/store';
 import axios from 'axios';
 
 const user = ref({});
 
 const like = async () => {
-    axios.post(store.routes['USER_LIKE'], { target_user_id: user.value.id })
+    axios.post(store.routes['USER_LIKE'], { target_user_id: user.value.id }).catch((error) => {
+        setError(error.response.data,'error');
+        fetchUser();
+    })
     .then(response => {
         fetchUser();
     });
@@ -39,6 +44,7 @@ const dislike = async () => {
 const fetchUser = async () => {
     axios.get(store.routes['USER_SEARCH'], {params : {id : "random"}}).catch((error) => {
         console.error(error.response.data);
+        setError(error.response.data,'error');
         return error
     }).then(response => {
         user.value = response.data;
