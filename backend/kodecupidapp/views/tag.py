@@ -28,3 +28,19 @@ class TagView(APIView):
         tag.users.add(user)
 
         return Response({'message': 'Tag added to user'}, status=status.HTTP_201_CREATED)
+    
+
+    def delete(self, request):
+
+        tag_id = request.data.get('tag_id')
+
+        user = request.user
+
+        tag = get_object_or_404(Tag, id=tag_id)
+
+        if user not in tag.users.all():
+            return Response({'message': 'User does not have tag'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        tag.users.remove(user)
+
+        return Response({'message': 'Tag removed from user'}, status=status.HTTP_204_NO_CONTENT)

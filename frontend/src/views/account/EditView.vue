@@ -189,7 +189,7 @@ const openTagList = () => {
 };
 
 const addTag = (tag) => {    
-    axios.post(store.routes['TAG_ADD'], {tag_id : tag.id})
+    axios.post(store.routes['USER_TAG_ADD'], {tag_id : tag.id})
     .catch((error) => {
         console.error(error.response.data);
         return error
@@ -204,5 +204,12 @@ const addTag = (tag) => {
 
 const deleteTag = (tag) => {
     user.value.tags = user.value.tags.filter((t) => t.id !== tag.id);
+    axios.delete(store.routes['USER_TAG_REMOVE'], {data:{tag_id : tag.id}})
+    .catch((error) => {
+        console.error(error.response.data);
+        return error
+    }).then(response => {
+        list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
+    });
 }
 </script>

@@ -21,7 +21,10 @@ export const API_ROUTES = {
     USER_DETAIL: API_SERVER_URL+'/api/user/',
     
     TAG_LIST: API_SERVER_URL+'/api/tags/',
-    TAG_ADD: API_SERVER_URL+'/api/tags/',
+    
+    USER_TAG_ADD: API_SERVER_URL+'/api/tags/',
+    USER_TAG_REMOVE: API_SERVER_URL+'/api/tags/',
+
     USER_TAGS: API_SERVER_URL+'/api/user/tags',
 
 };
