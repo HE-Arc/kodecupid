@@ -25,15 +25,17 @@
                 <v-row>
                     <v-col>
                         <v-card-subtitle>
-                            <v-text-field v-model="user.bio" label="bio" type="bio" :rules="bioRules" :value="user.bio" required />
+                            <v-text-field v-model="user.bio" label="bio" type="bio" :rules="bioRules" :value="user.bio"
+                                required />
                         </v-card-subtitle>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
                         <v-card-subtitle>
-                            <v-text-field v-model="user.looking_for" :rules="looking_forRules" label="préférences de recherche" type="looking_for"
-                                :value="user.looking_for" required />
+                            <v-text-field v-model="user.looking_for" :rules="looking_forRules"
+                                label="préférences de recherche" type="looking_for" :value="user.looking_for"
+                                required />
                         </v-card-subtitle>
                     </v-col>
                 </v-row>
@@ -102,7 +104,6 @@ const looking_forRules = [
 ];
 
 const handleSubmit = async () => {
-    console.log(uninitialized.value);
     user.value.tags = user.value.tags?.map(tag => tag.id);
 
     const jsonForm = JSON.stringify(user.value);
@@ -126,7 +127,6 @@ const fetchUser = async () => {
         console.error(error.response.data);
         return error
     }).then(response => {
-        console.log('user', response.data);
         user.value = response.data;
     });
 };
@@ -136,9 +136,7 @@ const fetchTags = async () => {
         console.error(error.response.data);
         return error
     }).then(response => {
-        console.log('tags', response.data);
         all_tags.push(...response.data);
-        console.log('tags', all_tags);
     });
 };
 
@@ -147,7 +145,6 @@ const fetchUserTags = async () => {
         console.error(error.response.data);
         return error
     }).then(response => {
-        console.log('user tags', response.data);
         user.value.tags = response.data;
     });
 };
@@ -188,15 +185,15 @@ const openTagList = () => {
     showTagList.value = true; // Show the tag list
 };
 
-const addTag = (tag) => {    
-    axios.post(store.routes['USER_TAG_ADD'], {tag_id : tag.id})
-    .catch((error) => {
-        console.error(error.response.data);
-        return error
-    }).then(response => {
-        user.value.tags.push(tag);
-        list_tags.value = all_tags.value.filter((tag) => !user.value.tags.includes(tag))
-    });
+const addTag = (tag) => {
+    axios.post(store.routes['USER_TAG_ADD'], JSON.stringify(tag))
+        .catch((error) => {
+            console.error(error.response.data);
+            return error
+        }).then(response => {
+            user.value.tags.push(tag);
+            list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
+        });
 
     showTagList.value = false;
     search.value = '';
@@ -204,12 +201,12 @@ const addTag = (tag) => {
 
 const deleteTag = (tag) => {
     user.value.tags = user.value.tags.filter((t) => t.id !== tag.id);
-    axios.delete(store.routes['USER_TAG_REMOVE'], {data:{tag_id : tag.id}})
-    .catch((error) => {
-        console.error(error.response.data);
-        return error
-    }).then(response => {
-        list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
-    });
+    axios.delete(store.routes['USER_TAG_REMOVE'], { data: JSON.stringify(tag) })
+        .catch((error) => {
+            console.error(error.response.data);
+            return error
+        }).then(response => {
+            list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
+        });
 }
 </script>

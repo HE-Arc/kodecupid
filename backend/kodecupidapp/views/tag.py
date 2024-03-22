@@ -16,15 +16,19 @@ class TagView(APIView):
     
     def post(self, request):
 
-        tag_id = request.data.get('tag_id')
+        serializer = TagSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         user = request.user
 
-        tag = get_object_or_404(Tag, id=tag_id)
+        tag_name = serializer.validated_data['name']
+        tag = get_object_or_404(Tag, name=tag_name)
 
         if user in tag.users.all():
             return Response({'message': 'User already has tag'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         tag.users.add(user)
 
         return Response({'message': 'Tag added to user'}, status=status.HTTP_201_CREATED)
@@ -32,15 +36,19 @@ class TagView(APIView):
 
     def delete(self, request):
 
-        tag_id = request.data.get('tag_id')
+        serializer = TagSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         user = request.user
 
-        tag = get_object_or_404(Tag, id=tag_id)
+        tag_name = serializer.validated_data['name']
+        tag = get_object_or_404(Tag, name=tag_name)
 
         if user not in tag.users.all():
             return Response({'message': 'User does not have tag'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         tag.users.remove(user)
 
         return Response({'message': 'Tag removed from user'}, status=status.HTTP_204_NO_CONTENT)
