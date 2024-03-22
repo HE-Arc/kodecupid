@@ -28,10 +28,10 @@ class UserView(APIView):
             serializer.save()
             return Response({"message": "User configured successfully."}, status=status.HTTP_204_NO_CONTENT)   
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def get(self, request):
-        if "id" in request.data:
-            id = request.data["id"]
+        if "id" in request.query_params:
+            id = request.query_params["id"]
 
             if id == "random":
                 try:
@@ -70,4 +70,3 @@ class UserView(APIView):
                 return Response({"message": "User successfully deleted."},status=status.HTTP_204_NO_CONTENT)
             return Response({"message": "User cannot be deleted."}, status=status.HTTP_403_FORBIDDEN)
         return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-    
