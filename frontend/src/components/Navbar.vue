@@ -64,8 +64,7 @@ export default {
             router.push({ name: 'signin', replace: true, force: true });
         },
         checkAuth() {
-            const token = localStorage.getItem('accessToken');
-            return token !== null;
+            return localStorage.getItem('accessToken') !== null;
         }
 
     }

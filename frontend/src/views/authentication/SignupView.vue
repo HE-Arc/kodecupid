@@ -35,6 +35,7 @@
 <script setup>
 import { ref } from 'vue';
 import { store } from '@/store';
+import { setError } from '@/store';
 import axios from 'axios';
 import router from '@/router';
 
@@ -63,12 +64,14 @@ const handleSubmit = async () => {
     , {  })
     .catch((error) => {
       console.error(error.response.data);
+      setError(error.response.data,'error');
       return error
     })
     .then(response => {
       console.log(response);
       if (response.status === 201) {
         localStorage.setItem('uninitialized', true);
+        setError({message: "Votre compte a été bien enregistre"},'success');
         router.push({ name: 'signin', replace: true, force: true});
       }
     });

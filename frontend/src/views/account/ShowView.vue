@@ -36,6 +36,7 @@
 
 <script setup>
 import { store } from '@/store';
+import { setError } from '@/store';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 import axios from 'axios';
@@ -52,6 +53,7 @@ const user = ref({
 const fetchUser = async ()=> {
     await axios.get(store.routes['USER_DETAIL']).catch((error) => {
         console.error(error.response.data);
+        setError(error.response.data,'error');
         return error
     }).then(response => {
         console.log(response.data);
@@ -62,6 +64,7 @@ const fetchUser = async ()=> {
 const fetchUserTags = async () => {
     axios.get(store.routes['USER_TAGS']).catch((error) => {
         console.error(error.response.data);
+        setError(error.response.data,'error');
         return error
     }).then(response => {
         console.log('user tags', response.data);

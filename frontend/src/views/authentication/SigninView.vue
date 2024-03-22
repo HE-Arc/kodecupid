@@ -9,8 +9,8 @@
       <v-row>
         <v-col>
           <v-label>Nom d'utilisateur</v-label>
-          <v-text-field v-model="form.username" label="Nom d'utilisateur" type="username" :rules="usernameRules" required
-            focused />
+          <v-text-field v-model="form.username" label="Nom d'utilisateur" type="username" :rules="usernameRules"
+            required focused />
         </v-col>
       </v-row>
       <v-row>
@@ -38,6 +38,7 @@ import axios from 'axios';
 
 import { ref } from 'vue';
 import { store } from '@/store';
+import { setError } from '@/store';
 
 import router from '@/router';
 
@@ -58,7 +59,7 @@ const passwordRules = [
 ];
 
 
-const handleSubmit = async  () => {
+const handleSubmit = async () => {
   const jsonForm = JSON.stringify(form.value);
 
   axios.post(store.routes['USER_SIGNIN'], jsonForm, {
@@ -68,7 +69,8 @@ const handleSubmit = async  () => {
     }
   })
     .catch((error) => {
-      console.error(error.response.data);
+      console.error("Signin error", error.response.data);
+      setError(error.response.data,'error');
       return error
     })
     .then(response => {
@@ -77,12 +79,12 @@ const handleSubmit = async  () => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
         localStorage.setItem('refreshToken', response.data.refresh);
         if (uninitialized.value) {
-          router.push({ name: 'account-edit',replace: true, force: true });
+          router.push({ name: 'account-edit', replace: true, force: true });
         }
         else {
-          router.push({ name: 'account-show',replace: true, force: true });
+          router.push({ name: 'account-show', replace: true, force: true });
         }
-        
+
       }
     });
 };
