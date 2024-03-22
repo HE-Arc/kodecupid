@@ -80,7 +80,7 @@ const user = ref({
     tags: ref([])
 });
 
-const all_tags = ref({})
+const all_tags = [];
 const list_tags = ref([]);
 
 const showTagList = ref(false);
@@ -122,28 +122,32 @@ const handleSubmit = async () => {
 };
 
 const fetchUser = async () => {
-    const response = await axios.get(store.routes['USER_DETAIL']).catch((error) => {
+    axios.get(store.routes['USER_DETAIL']).catch((error) => {
         console.error(error.response.data);
         return error
     }).then(response => {
+        console.log('user', response.data);
         user.value = response.data;
     });
 };
 
 const fetchTags = async () => {
-    const response = await axios.get(store.routes['TAG_LIST']).catch((error) => {
+    axios.get(store.routes['TAG_LIST']).catch((error) => {
         console.error(error.response.data);
         return error
     }).then(response => {
-        all_tags.value = response.data;
+        console.log('tags', response.data);
+        all_tags.push(...response.data);
+        console.log('tags', all_tags);
     });
 };
 
 const fetchUserTags = async () => {
-    const response = await axios.get(store.routes['USER_TAGS']).catch((error) => {
+    axios.get(store.routes['USER_TAGS']).catch((error) => {
         console.error(error.response.data);
         return error
     }).then(response => {
+        console.log('user tags', response.data);
         user.value.tags = response.data;
     });
 };
@@ -171,9 +175,11 @@ watch(search, () => {
 
 
 const filteredTags = () => {
-    // list_tags.value = all_tags.value.filter((tag) => !user.value.tags.value.includes(tag))
-    console.log(list_tags.value);
-    return list_tags.value.filter(tag =>
+    const all_tags_ids = all_tags.map((tag) => tag.id);
+    const user_tags_ids = user.value.tags.map((tag) => tag.id);
+    const all_tags_not_in_user = all_tags_ids.filter((tag) => !user_tags_ids.includes(tag));
+    const filtered_tags = all_tags.filter((tag) => all_tags_not_in_user.includes(tag.id));
+    return filtered_tags.filter(tag =>
         tag.name.toLowerCase().includes(search.value.toLowerCase())
     );
 }

@@ -50,7 +50,7 @@ const user = ref({
 
 
 const fetchUser = async ()=> {
-    const response = await axios.get(store.routes['USER_DETAIL']).catch((error) => {
+    await axios.get(store.routes['USER_DETAIL']).catch((error) => {
         console.error(error.response.data);
         return error
     }).then(response => {
@@ -59,7 +59,19 @@ const fetchUser = async ()=> {
     });
 };
 
+const fetchUserTags = async () => {
+    axios.get(store.routes['USER_TAGS']).catch((error) => {
+        console.error(error.response.data);
+        return error
+    }).then(response => {
+        console.log('user tags', response.data);
+        user.value.tags = response.data;
+    });
+};
+
+
 onMounted(() => {
     fetchUser();
+    fetchUserTags();
 });
 </script>
