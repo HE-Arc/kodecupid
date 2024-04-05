@@ -18,14 +18,15 @@ export const API_ROUTES = {
     USER_SIGNIN: API_SERVER_URL+'/api/token/',
     USER_TOKEN_REFRESH: API_SERVER_URL+'/api/token/refresh/',
     
-    USER_DETAIL: API_SERVER_URL+'/api/user/',
+    USER: API_SERVER_URL+'/api/user/',
+    USER_RANDOM: API_SERVER_URL+'/api/user/random',
     
     TAG_LIST: API_SERVER_URL+'/api/tags/',
     
     USER_TAG_ADD: API_SERVER_URL+'/api/tags/',
     USER_TAG_REMOVE: API_SERVER_URL+'/api/tags/',
 
-    USER_TAGS: API_SERVER_URL+'/api/user/tags',
+    USER_TAGS: API_SERVER_URL+'/api/user/tags'
 
 };
 

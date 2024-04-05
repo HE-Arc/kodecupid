@@ -51,7 +51,7 @@ const user = ref({
 
 
 const fetchUser = async ()=> {
-    await axios.get(store.routes['USER_DETAIL']).catch((error) => {
+    await axios.get(store.routes['USER']).catch((error) => {
         console.error(error.response.data);
         setError(error.response.data,'error');
         return error

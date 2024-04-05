@@ -107,7 +107,7 @@ const handleSubmit = async () => {
 
     const jsonForm = JSON.stringify(user.value);
 
-    axios.patch(store.routes['USER_DETAIL'], jsonForm, {
+    axios.patch(store.routes['USER'], jsonForm, {
         headers: {
             'Content-Type': 'application/json'
         }
@@ -124,7 +124,7 @@ const handleSubmit = async () => {
 };
 
 const fetchUser = async () => {
-    axios.get(store.routes['USER_DETAIL']).catch((error) => {
+    axios.get(store.routes['USER']).catch((error) => {
         console.error(error.response.data);
         setError(error.response.data,'error');
         return error

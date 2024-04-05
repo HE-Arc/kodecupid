@@ -42,7 +42,7 @@ const dislike = async () => {
 };
 
 const fetchUser = async () => {
-    axios.get(store.routes['USER_SEARCH'], {params : {id : "random"}}).catch((error) => {
+    axios.get(store.routes['USER_RANDOM']).catch((error) => {
         console.error(error.response.data);
         setError(error.response.data,'error');
         return error
