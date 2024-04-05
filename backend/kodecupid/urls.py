@@ -16,7 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from kodecupidapp.views import UserView, TagView, PictureView, LikeView, UserTagView
+
+from kodecupidapp.views import (
+    UserView, 
+    TagView,
+    PictureView,
+    LikeView,
+    UserTagView,
+    user_by_id,
+    random_user
+)
+
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -24,11 +34,17 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
     path('api/user/', UserView.as_view(), name='user'),
     path('api/picture/', PictureView.as_view(), name='picture'),
     path('api/tags/', TagView.as_view(), name='tag-list'),
     path('api/like/', LikeView.as_view(), name='like-create'),
-    path('api/user/tags', UserTagView.as_view(), name='user-tag')
+
+    path('api/user/tags', UserTagView.as_view(), name='user-tag'),
+
+    path('api/user/random', random_user, name='random-user'),
+    path('api/user/<int:id>', user_by_id, name='user-by-id')
 ]

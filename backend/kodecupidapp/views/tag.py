@@ -26,10 +26,10 @@ class TagView(APIView):
         tag_name = serializer.validated_data['name']
         tag = get_object_or_404(Tag, name=tag_name)
 
-        if user in tag.users.all():
+        if tag in user.tags.all():
             return Response({'message': 'User already has tag'}, status=status.HTTP_400_BAD_REQUEST)
 
-        tag.users.add(user)
+        user.tags.add(tag)
 
         return Response({'message': 'Tag added to user'}, status=status.HTTP_201_CREATED)
     

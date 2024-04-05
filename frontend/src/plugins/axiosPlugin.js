@@ -13,19 +13,28 @@ export default {
                 originalRequest._retry = true;
                 const refreshToken = localStorage.getItem('refreshToken');
 
-                return axios.post(store.routes['USER_TOKEN_REFRESH'], {
+                return axios.post(store.routes['USER_TOKEN_REFRESH'], 
+                {
                     'refresh': refreshToken
-                }, {
+                },
+                {
                     withCredentials: true
-                }).then((response) => {
-                    if (response.status === 200) {
+                })
+                .then((response) => 
+                {
+                    if (response.status === 200)
+                    {
                         localStorage.setItem('accessToken', response.data.access);
                         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
                         return axios(originalRequest);
-                    } else {
+                    }
+                    else
+                    {
                         router.push({ name: 'signin',replace: true, force: true });
                     }
-                }).catch(() => {
+                })
+                .catch(() => 
+                {
                     router.push({ name: 'signin',replace: true, force: true });
                 });
             }
