@@ -60,6 +60,10 @@
                         </v-chip-group>
                     </v-col>
                 </v-row>
+
+                <v-row>
+                    <image-uploader></image-uploader>
+                </v-row>
             </v-container>
         </v-card>
     </v-form>
@@ -72,6 +76,7 @@ import { ref } from 'vue';
 import { onMounted } from 'vue';
 import axios from 'axios';
 import { computed } from 'vue';
+import ImageUploader from '@/components/ImageUploader.vue';
 
 const user = ref({
     username: ref(''),

@@ -12,16 +12,18 @@ class PictureView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = PictureSerializer(data=request.data)
+
+        modified_data = request.data.copy()
+        modified_data['user'] = request.user.id
+
+        serializer = PictureSerializer(data=modified_data)
         if serializer.is_valid():
-            if request.user.id == int(request.data["user"]):
-                serializer.save()
-                return Response({"message": "Picture added successfully."}, status=status.HTTP_201_CREATED)
-            return Response({"message": "Picture cannot be added to another user."}, status=status.HTTP_403_FORBIDDEN)
+            serializer.save()
+            return Response({"message": "Picture added successfully."}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def get(self, request):
-        id = request.data["id"]
+        id = request.user.id
         if Picture.objects.filter(id = id).exists():
             pic = Picture.objects.get(id = id)
             serializer = PictureSerializer(pic, many=False)

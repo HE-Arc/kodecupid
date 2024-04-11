@@ -45,6 +45,6 @@ urlpatterns = [
 
     path('api/user/tags', UserTagView.as_view(), name='user-tag'),
 
-    path('api/user/random', random_user, name='random-user'),
-    path('api/user/<int:id>', user_by_id, name='user-by-id')
+    path('api/user/random/', random_user, name='random-user'),
+    path('api/user/<int:id>/', user_by_id, name='user-by-id')
 ]

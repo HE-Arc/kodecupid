@@ -17,6 +17,7 @@
 </template>
 
 <script setup>
+
 import { onMounted, ref } from 'vue';
 import PeopleCard from '@/components/PeopleCard.vue';
 
