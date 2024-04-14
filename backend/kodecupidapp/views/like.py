@@ -6,6 +6,8 @@ from ..models import Like
 
 class LikeView(APIView):
 
+    serializer_class = LikeSerializer
+
     def post(self, request):
         serializer = LikeSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():

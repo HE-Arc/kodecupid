@@ -7,6 +7,8 @@ from ..serializers import UserSerializer, UserRegistrationSerializer, UserConfig
 
 class UserView(APIView):
 
+    serializer_class = UserSerializer
+
     def get_permissions(self):
         if self.request.method in ["POST"]:
             return [AllowAny()]

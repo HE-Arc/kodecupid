@@ -9,6 +9,7 @@ import random
 
 class PictureView(APIView):
 
+    serializer_class = PictureSerializer
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
