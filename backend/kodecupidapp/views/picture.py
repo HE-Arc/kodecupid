@@ -6,12 +6,13 @@ from rest_framework.permissions import IsAuthenticated
 from ..models import Picture
 from ..serializers import PictureSerializer
 
+
 class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyModelMixin):
     queryset = Picture.objects.all()
     serializer_class = PictureSerializer
     permission_classes = [IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             if request.user.id == int(request.data["user"]):
@@ -20,12 +21,12 @@ class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyM
             return Response({"message": "Picture cannot be added to another user."}, status=status.HTTP_403_FORBIDDEN)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, *args, **kwargs):
+    def destroy(self, request):
         instance = self.get_object()
         if request.user.id == instance.user.id:
             self.perform_destroy(instance)

@@ -22,10 +22,6 @@
 import { onMounted, ref } from 'vue';
 import PeopleCard from '@/components/PeopleCard.vue';
 
-import { store } from '@/store';
-import { setError } from '@/store';
-import axios from 'axios';
-
 const match = ref([]);
 
 const fetchUserMatch = async () => {

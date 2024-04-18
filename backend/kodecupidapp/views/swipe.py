@@ -9,7 +9,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from ..serializers import UserSerializer
 
-from ..models import User
+from ..models import User, Like
 
 import random
 
@@ -19,10 +19,7 @@ class SwipeView(GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
 
-    @action(detail=True, methods=['get'],url_path='<int:pk>')
-    @extend_schema(
-        parameters=[OpenApiParameter(name='pk', type=int)]
-    )
+    @action(detail=False, methods=['get'],url_path='<int:pk>')
     def user_by_id(self,request, pk):
         if User.objects.filter(id = pk).exists():
             user = User.objects.get(id = pk)
@@ -32,12 +29,11 @@ class SwipeView(GenericViewSet):
             return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['get'])
-    @extend_schema(
-        parameters=[OpenApiParameter(name='pk', type=int)]
-    )
     def random_user(self,request):
         users = User.objects.exclude(id=request.user.id)
-        users = users.exclude(likes__source_user=request.user)
+
+        likes_source_user = Like.objects.filter(source_user=request.user).values_list('target_user', flat=True)
+        users = users.exclude(id__in=likes_source_user)
 
         if len(users) == 0:
             return Response({"message": "Looks like you liked them all"}, status=status.HTTP_404_NOT_FOUND)

@@ -25,15 +25,17 @@
                 <v-row>
                     <v-col>
                         <v-card-subtitle>
-                            <v-text-field v-model="user.bio" label="Bio" type="bio" :rules="bioRules" :value="user.bio" required />
+                            <v-text-field v-model="user.bio" label="Bio" type="bio" :rules="bioRules" :value="user.bio"
+                                required />
                         </v-card-subtitle>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
                         <v-card-subtitle>
-                            <v-text-field v-model="user.looking_for" :rules="looking_forRules" label="Préférences de recherche" type="looking_for"
-                                :value="user.looking_for" required />
+                            <v-text-field v-model="user.looking_for" :rules="looking_forRules"
+                                label="Préférences de recherche" type="looking_for" :value="user.looking_for"
+                                required />
                         </v-card-subtitle>
                     </v-col>
                 </v-row>
@@ -66,20 +68,12 @@
 </template>
 
 <script setup>
-import { store } from '@/store';
-import { setError } from '@/store';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
-import axios from 'axios';
 import { computed } from 'vue';
+import { ApiClient } from '@/clients/apiClient.js';
 
-const user = ref({
-    username: ref(''),
-    bio: ref(''),
-    looking_for: ref(''),
-    pfp: ref('https://picsum.photos/170'),
-    tags: ref([])
-});
+const user = ref({});
 
 const all_tags = [];
 const list_tags = ref([]);
@@ -104,59 +98,34 @@ const looking_forRules = [
 
 const handleSubmit = async () => {
     user.value.tags = user.value.tags?.map(tag => tag.id);
+    
+    const response = await ApiClient.updateUser(JSON.stringify(user.value), user.value.id);
 
-    const jsonForm = JSON.stringify(user.value);
-
-    axios.patch(store.routes['USER'], jsonForm, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }, { withCredentials: true }).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        uninitialized.value = false;
-        setError({message:'L\'utilisateur a été mis à jour'},'success');
-        localStorage.setItem('uninitialized', false);
+    if (response) {
         router.push({ name: 'account-show', replace: true, force: true });
-    });
+    }
 };
 
 const fetchUser = async () => {
-    axios.get(store.routes['USER']).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        user.value = response.data;
-    });
+    const fetchedUser = await ApiClient.getUser();
+    const fetchedTags = await ApiClient.getUserTags(fetchedUser.id);
+
+    user.value.id = fetchedUser.id;
+    user.value.username = fetchedUser.username;
+    user.value.bio = fetchedUser.bio;
+    user.value.looking_for = fetchedUser.looking_for;
+    user.value.pfp = fetchedUser.pfp;
+    user.value.tags = fetchedTags;
 };
 
 const fetchTags = async () => {
-    axios.get(store.routes['TAG_LIST']).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        all_tags.push(...response.data);
-    });
-};
-
-const fetchUserTags = async () => {
-    axios.get(store.routes['USER_TAGS']).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        user.value.tags = response.data;
-    });
+    const fetchedTags = await ApiClient.getTags();
+    all_tags.push(...fetchedTags);
 };
 
 onMounted(() => {
     fetchUser();
     fetchTags();
-    fetchUserTags();
 });
 
 computed(() => {
@@ -189,30 +158,22 @@ const openTagList = () => {
     showTagList.value = true; // Show the tag list
 };
 
-const addTag = (tag) => {
-    axios.post(store.routes['USER_TAG_ADD'], JSON.stringify(tag))
-        .catch((error) => {
-            console.error(error.response.data);
-            setError(error.response.data,'error');
-            return error
-        }).then(response => {
-            user.value.tags.push(tag);
-            list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
-        });
-
-    showTagList.value = false;
-    search.value = '';
+const addTag = async (tag) => {
+    const jsonTag = JSON.stringify(tag);
+    const response = await ApiClient.addUserTag(jsonTag);
+    if (response) {
+        user.value.tags.push(tag);
+        showTagList.value = false;
+        search.value = '';
+    }
 }
 
-const deleteTag = (tag) => {
-    user.value.tags = user.value.tags.filter((t) => t.id !== tag.id);
-    axios.delete(store.routes['USER_TAG_REMOVE'], { data: JSON.stringify(tag) })
-        .catch((error) => {
-            console.error(error.response.data);
-            setError(error.response.data,'error');
-            return error
-        }).then(response => {
-            list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
-        });
+const deleteTag = async (tag) => {
+    const jsonTag = JSON.stringify(tag);
+    const response = await ApiClient.deleteUserTag(jsonTag);
+    if (response) {
+        user.value.tags = user.value.tags.filter((t) => t.id !== tag.id);
+        list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
+    }
 }
 </script>
