@@ -61,6 +61,17 @@ export class ApiClient {
     }
   }
 
+  static async getUserMatches() {
+    try {
+      const response = await axios.get(handleRoute(RouteEnum.SWIPE_MATCHES));
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data);
+      setError(error.response?.data, 'error');
+      return error;
+    }
+  }
+
   static async likeUser(id) {
 
     console.log('likeUser', id);
