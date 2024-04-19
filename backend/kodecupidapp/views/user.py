@@ -1,50 +1,97 @@
-from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import  CreateModelMixin
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from ..models import User
+
+from django.shortcuts import get_object_or_404
+
+from ..models import User, Tag
 from ..serializers import UserSerializer, UserRegistrationSerializer, UserConfigurationSerializer, TagSerializer
 
-class UserView(APIView):
+from rest_framework.decorators import action
 
+class UserView(GenericViewSet, CreateModelMixin):
+    queryset = User.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return UserRegistrationSerializer
+        elif self.action == "partial_update":
+            return UserConfigurationSerializer
+        else:
+            return UserSerializer
+    
     def get_permissions(self):
-        if self.request.method in ["POST"]:
+        if self.action == "create":
             return [AllowAny()]
         else:
             return [IsAuthenticated()]
 
-    def post(self, request):
-        serializer = UserRegistrationSerializer(data=request.data)
+    def create(self, request):
+        serializer = self.get_serializer_class()(data=request.data)
 
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "User created successfully."}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def patch(self, request):
-        serializer = UserConfigurationSerializer(request.user, data=request.data)
+    def partial_update(self, request, pk=None):
+        user = request.user
+        serializer = self.get_serializer_class()(user, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "User configured successfully."}, status=status.HTTP_204_NO_CONTENT)   
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request):
-        
-        id = request.user.id
 
-        if User.objects.filter(id = id).exists():
-            user = User.objects.get(id = id)
-            serializer = UserSerializer(user, many=False)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+    @action(detail=False, methods=['get'])
+    def current(self, request):
+        user = request.user
+        serializer = self.get_serializer_class()(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
-class UserTagView(APIView):
+    @action(detail=True, methods=['get'])
+    def tags(self, request, pk=None):
+        user = self.get_object()
+        serializer = TagSerializer(user.tags, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['post'])
+    def add_tag(self, request):
+        serializer = TagSerializer(data=request.data)
 
-    def get(self, request):
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         user = request.user
 
-        serializer = TagSerializer(user.tags, many=True)
+        tag_name = serializer.validated_data['name']
+        tag = get_object_or_404(Tag, name=tag_name)
 
-        return Response(serializer.data)
+        if tag in user.tags.all():
+            return Response({'message': 'User already has tag'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.tags.add(tag)
+
+        return Response({'message': 'Tag added to user'}, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['delete'])
+    def remove_tag(self, request):
+        serializer = TagSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+
+        tag_name = serializer.validated_data['name']
+        tag = get_object_or_404(Tag, name=tag_name)
+
+        if tag not in user.tags.all():
+            return Response({'message': 'User does not have tag'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.tags.remove(tag)
+
+        return Response({'message': 'Tag removed from user'}, status=status.HTTP_204_NO_CONTENT)

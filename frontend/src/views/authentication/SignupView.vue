@@ -34,10 +34,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { store } from '@/store';
-import { setError } from '@/store';
-import axios from 'axios';
-import router from '@/router';
+import {ApiClient} from '@/clients/apiClient.js';
 
 const form = ref({
   username: '',
@@ -56,24 +53,12 @@ const passwordRules = [
 
 const handleSubmit = async () => {
   const jsonForm = JSON.stringify(form.value);
-  axios.post(store.routes['USER_SIGNUP'], jsonForm, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': "anonymous"
-    }}
-    , {  })
-    .catch((error) => {
-      console.error(error.response.data);
-      setError(error.response.data,'error');
-      return error
-    })
-    .then(response => {
-      console.log(response);
-      if (response.status === 201) {
-        localStorage.setItem('uninitialized', true);
-        setError({message: "Votre compte a été bien enregistre"},'success');
-        router.push({ name: 'signin', replace: true, force: true});
-      }
-    });
+
+  const response = await ApiClient.signupUser(jsonForm);
+
+  if (response){
+    router.push({name: 'signin', replace: true, force: true});
+  }
+  
 };
 </script>
