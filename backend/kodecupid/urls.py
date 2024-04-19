@@ -15,16 +15,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+from rest_framework import routers
+
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from kodecupidapp.views import (
-    UserView, 
+    UserView,
     TagView,
     PictureView,
     LikeView,
-    UserTagView,
-    user_by_id,
-    random_user
+    SwipeView,
 )
 
 from rest_framework_simplejwt.views import (
@@ -32,19 +34,24 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+base_url = 'api/'
+
+router = routers.DefaultRouter()
+router.register('users', UserView, basename='user')
+router.register('tags', TagView, basename='tag')
+router.register('pictures', PictureView, basename='picture')
+router.register('likes', LikeView, basename='like')
+router.register('swipes', SwipeView, basename='swipe')
+
 urlpatterns = [
+
     path('admin/', admin.site.urls),
+
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-
-    path('api/user/', UserView.as_view(), name='user'),
-    path('api/picture/', PictureView.as_view(), name='picture'),
-    path('api/tags/', TagView.as_view(), name='tag-list'),
-    path('api/like/', LikeView.as_view(), name='like-create'),
-
-    path('api/user/tags', UserTagView.as_view(), name='user-tag'),
-
-    path('api/user/random/', random_user, name='random-user'),
-    path('api/user/<int:id>/', user_by_id, name='user-by-id')
+    
+    path(base_url, include(router.urls)),
 ]

@@ -21,21 +21,16 @@
 import { onMounted, ref } from 'vue';
 import PeopleCard from '@/components/PeopleCard.vue';
 
-
-import { store } from '@/store';
-import { setError } from '@/store';
-import axios from 'axios';
+import { ApiClient } from '@/clients/apiClient.js';
 
 const user = ref({});
 
 const like = async () => {
-    axios.post(store.routes['USER_LIKE'], { target_user_id: user.value.id }).catch((error) => {
-        setError(error.response.data,'error');
+    console.log(user.value);
+    const liked = await ApiClient.likeUser(user.value.id);
+    if (liked) {
         fetchUser();
-    })
-    .then(response => {
-        fetchUser();
-    });
+    }
 };
 
 const dislike = async () => {
@@ -43,13 +38,13 @@ const dislike = async () => {
 };
 
 const fetchUser = async () => {
-    axios.get(store.routes['USER_RANDOM']).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        user.value = response.data;
-    });
+    const fetchedUser = await ApiClient.getUserRandom();
+
+    user.value.id = fetchedUser.id;
+    user.value.username = fetchedUser.username;
+    user.value.bio = fetchedUser.bio;
+    user.value.looking_for = fetchedUser.looking_for;
+    user.value.pfp = fetchedUser.pfp;
 };
 
 onMounted(() => {

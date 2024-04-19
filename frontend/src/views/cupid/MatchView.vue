@@ -20,24 +20,13 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import { ApiClient } from '@/clients/apiClient.js';
 import PeopleCard from '@/components/PeopleCard.vue';
-
-import { store } from '@/store';
-import { setError } from '@/store';
-import axios from 'axios';
 
 const match = ref([]);
 
 const fetchUserMatch = async () => {
-    // TODO not implemented yet -> will be done in the future
-    // axios.get(store.routes['USER_MATCH'], {}).catch((error) => {
-    //     console.error(error.response.data);
-    //     store.error.value = error.response.data;
-    //     return error
-    // })
-    //     .then(response => {
-    //         match.value = response.data;
-    //     });
+    match.value = await ApiClient.getUserMatches();
 };
 
 onMounted(() => {
