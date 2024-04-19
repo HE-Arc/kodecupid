@@ -36,6 +36,7 @@
 <script setup>
 import { ref } from 'vue';
 import { ApiClient } from '@/clients/apiClient.js';
+import router from '@/router';
 
 const form = ref({
   username: '',

@@ -72,6 +72,8 @@ import { ref } from 'vue';
 import { onMounted } from 'vue';
 import { computed } from 'vue';
 import { ApiClient } from '@/clients/apiClient.js';
+import { watch } from 'vue';
+import router from '@/router';
 
 const user = ref({});
 
@@ -132,8 +134,7 @@ computed(() => {
     filteredTags();
 });
 
-import { watch } from 'vue';
-import router from '@/router';
+
 
 watch(search, () => {
     // Reset scroll position when search changes
