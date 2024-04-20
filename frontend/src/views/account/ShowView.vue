@@ -4,7 +4,7 @@
             <v-row>
                 <v-col>
                     <v-img cover class="rounded-circle border border-secondary border-lg" width="100" height="100"
-                        :src="user.pfp">
+                        :src=pfp>
                     </v-img>
                 </v-col>
 
@@ -41,10 +41,16 @@ import { onMounted } from 'vue';
 import { ApiClient } from '@/clients/apiClient.js';
 
 const user = ref({});
+const pfp = ref({});
 
 const fetchUser = async () => {
     const fetchedUser = await ApiClient.getUser();
     const fetchedTags = await ApiClient.getUserTags(fetchedUser.id);
+    const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
+
+    if (fetchedUserPfp) {
+        pfp.value = fetchedUserPfp;
+    }
 
     user.value.username = fetchedUser.username;
     user.value.bio = fetchedUser.bio;

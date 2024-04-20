@@ -52,7 +52,8 @@ export class ApiClient {
 
   static async getUserRandom() {
     try {
-      const response = await axios.get(handleRoute(RouteEnum.SWIPE_RANDOM_USER));
+      const response =
+          await axios.get(handleRoute(RouteEnum.SWIPE_RANDOM_USER));
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
@@ -73,10 +74,9 @@ export class ApiClient {
   }
 
   static async likeUser(id) {
-
     console.log('likeUser', id);
     try {
-      await axios.post(handleRoute(RouteEnum.LIKE_LIST),{target_user_id: id });
+      await axios.post(handleRoute(RouteEnum.LIKE_LIST), {target_user_id: id});
       return true;
     } catch (error) {
       console.error(error.response?.data);
@@ -98,8 +98,8 @@ export class ApiClient {
 
   static async getUserTags(id) {
     try {
-      const response = await axios.get(
-          handleRoute(RouteEnum.USER_TAGS, id));
+      const response =
+          await axios.get(handleRoute(RouteEnum.USER_TAGS_LIST, id));
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
@@ -108,30 +108,28 @@ export class ApiClient {
     }
   };
 
-  static async updateUser(user,id) {
+  static async updateUser(user, id) {
     try {
-        await axios.patch(handleRoute(RouteEnum.USER_DETAIL,id), user, {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            withCredentials: true
-        });
-    
-        setError({ message: 'L\'utilisateur a été mis à jour' }, 'success');
-        localStorage.setItem('uninitialized', false);
-        return true;
+      await axios.patch(handleRoute(RouteEnum.USER_DETAIL, id), user, {
+        headers: {'Content-Type': 'application/json'},
+        withCredentials: true
+      });
+
+      setError({message: 'L\'utilisateur a été mis à jour'}, 'success');
+      localStorage.setItem('uninitialized', false);
+      return true;
     } catch (error) {
-        console.error(error);
-        setError(error.response?.data, 'error');
-        return false;
+      console.error(error);
+      setError(error.response?.data, 'error');
+      return false;
     }
   }
 
   static async addUserTag(tag) {
     try {
-      const response = await axios.post(
-          handleRoute(RouteEnum.USER_ADD_TAG), tag);
-          setError(response.data, 'success');
+      const response =
+          await axios.post(handleRoute(RouteEnum.USER_ADD_TAG), tag);
+      setError(response.data, 'success');
       return true;
     } catch (error) {
       console.error(error.response?.data);
@@ -174,9 +172,11 @@ export class ApiClient {
           handleRoute(RouteEnum.TOKEN_REFRESH), {'refresh': refreshToken},
           {withCredentials: true});
 
+      console.log(response);
       if (response.status === 200) {
         localStorage.setItem('accessToken', response.data.access);
-        axios.defaults.headers.common['Authorization'] =`Bearer ${localStorage.getItem('accessToken')}`;
+        axios.defaults.headers.common['Authorization'] =
+            `Bearer ${localStorage.getItem('accessToken')}`;
         return true;
       } else {
         return false;
@@ -185,7 +185,59 @@ export class ApiClient {
       return false;
     }
   }
+
+  // images
+
+  static async getPicture(id) {
+    const arrayBufferToBase64 = buffer => btoa(String.fromCharCode(...new Uint8Array(buffer)));
+
+    try {
+      const response = await axios.get(
+          handleRoute(RouteEnum.PICTURE_DETAIL, id),
+          {responseType: 'arraybuffer'});
+
+      return `data:image/jpeg;base64,${arrayBufferToBase64(response.data)}`;
+    } catch (error) {
+      console.error(error.response?.data);
+      setError(error.response?.data, 'error');
+      return error;
+    }
+  }
+
+  static async addPicture(image) {
+    try {
+      const response =
+          await axios.post(handleRoute(RouteEnum.PICTURE_LIST), image, {
+            headers: {'Content-Type': 'multipart/form-data'},
+            withCredentials: true
+          });
+
+      console.log(response.data);
+      return response.data.id;
+    } catch (error) {
+      console.error(error.response?.data);
+      setError(error.response?.data, 'error');
+      return error;
+    }
+  }
+  static async addProfilePicture(image) {
+    try {
+      console.log('addProfilePicture', image);
+      const response = await axios.post(
+          handleRoute(RouteEnum.USER_ADD_PICTURE), image,
+          {headers: {'Content-Type': 'json'}, withCredentials: true});
+
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data);
+      setError(error.response?.data, 'error');
+      return error;
+    }
+  }
 }
+
+
 
 const handleRoute = (function() {
   function handleRoute(routeName, id) {
@@ -198,7 +250,7 @@ const handleRoute = (function() {
     if (id !== undefined) {
       routeUrl = routeUrl.replace('{id}', id);
     }
-    return API_SERVER_URL +routeUrl;
+    return API_SERVER_URL + routeUrl;
   }
   return handleRoute;
 })();

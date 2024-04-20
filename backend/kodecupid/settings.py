@@ -97,6 +97,9 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
+MEDIA_URL = '/files/'
+MEDIA_ROOT = BASE_DIR
+
 WSGI_APPLICATION = 'kodecupid.wsgi.application'
 
 # Database

@@ -95,3 +95,10 @@ class UserView(GenericViewSet, CreateModelMixin):
         user.tags.remove(tag)
 
         return Response({'message': 'Tag removed from user'}, status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=False, methods=['post'])
+    def add_picture(self, request):
+        user = request.user
+        user.pfp = request.data['pfp']
+        user.save()
+        return Response({"message": "Picture added successfully."}, status=status.HTTP_201_CREATED)
