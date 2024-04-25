@@ -58,7 +58,7 @@ export class ApiClient {
     } catch (error) {
       console.error(error.response?.data);
       setError(error.response?.data, 'error');
-      return error;
+      return false;
     }
   }
 
@@ -166,13 +166,13 @@ export class ApiClient {
 
   // token
 
-  static async refreshToken(refreshToken) {
+  static async refreshToken() {
+    const refreshToken = localStorage.getItem('refreshToken');
+    localStorage.removeItem('accessToken');
     try {
       const response = await axios.post(
           handleRoute(RouteEnum.TOKEN_REFRESH), {'refresh': refreshToken},
           {withCredentials: true});
-
-      console.log(response);
       if (response.status === 200) {
         localStorage.setItem('accessToken', response.data.access);
         axios.defaults.headers.common['Authorization'] =
@@ -189,7 +189,8 @@ export class ApiClient {
   // images
 
   static async getPicture(id) {
-    const arrayBufferToBase64 = buffer => btoa(String.fromCharCode(...new Uint8Array(buffer)));
+    const arrayBufferToBase64 = buffer =>
+        btoa(String.fromCharCode(...new Uint8Array(buffer)));
 
     try {
       const response = await axios.get(

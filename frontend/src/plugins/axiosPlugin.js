@@ -11,8 +11,7 @@ export default {
             const originalRequest = error.config;
             if (error.response.status === 401 && !originalRequest._retry) {
                 originalRequest._retry = true;
-                const refreshToken = localStorage.getItem('refreshToken');
-                const response = await ApiClient.refreshToken(refreshToken);
+                const response = await ApiClient.refreshToken();
                 if (response) {
                     return axios(originalRequest);
                 }else{

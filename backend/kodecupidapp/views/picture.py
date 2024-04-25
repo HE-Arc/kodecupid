@@ -1,5 +1,5 @@
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, ListModelMixin, DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -11,7 +11,7 @@ from django.http import HttpResponse
 import os
 
 
-class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyModelMixin):
+class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, ListModelMixin, DestroyModelMixin):
     queryset = Picture.objects.all()
     serializer_class = PictureSerializer
     permission_classes = [IsAuthenticated]
@@ -28,9 +28,14 @@ class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyM
             return Response({"message": "Picture added successfully.", "id": new_id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request, *args, **kwargs):
+
+    def list(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request):
         instance = self.get_object()
-        # serializer = self.get_serializer(instance)
         
         # Get the image path
         image_path = instance.image.path
@@ -43,15 +48,6 @@ class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyM
         response['Content-Disposition'] = 'attachment; filename="image.jpg"'
         return response
 
-    # def retrieve(self, request, pk=None):
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance)
-
-    #     # content_type = "image/png"  # Adjust according to the actual image type
-
-    # # Return the picture data in an HTTP response
-    # # return HttpResponse(picture_data, content_type=content_type)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request):
         instance = self.get_object()

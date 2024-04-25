@@ -27,6 +27,22 @@ const match = ref([]);
 
 const fetchUserMatch = async () => {
     match.value = await ApiClient.getUserMatches();
+
+    match.value.forEach(async (user) => {
+        console.log(user);
+        if (user.pfp) {
+            const fetchedUserPfp = await ApiClient.getPicture(user.pfp);
+            if (fetchedUserPfp) {
+                user.pfp_src = fetchedUserPfp;
+            }
+        }
+
+        const fetchedTags = ApiClient.getUserTags(user.id);
+        if (fetchedTags) {
+            user.tags = fetchedTags;
+        }
+
+    });
 };
 
 onMounted(() => {
