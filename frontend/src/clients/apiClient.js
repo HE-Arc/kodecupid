@@ -218,7 +218,7 @@ export class ApiClient {
     } catch (error) {
       console.error(error.response?.data);
       setError(error.response?.data, 'error');
-      return error;
+      return false;
     }
   }
   static async addProfilePicture(image) {

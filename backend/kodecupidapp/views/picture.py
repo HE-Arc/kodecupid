@@ -11,7 +11,7 @@ from django.http import HttpResponse
 import os
 
 
-class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, ListModelMixin, DestroyModelMixin):
+class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyModelMixin):
     queryset = Picture.objects.all()
     serializer_class = PictureSerializer
     permission_classes = [IsAuthenticated]
@@ -28,13 +28,7 @@ class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, ListMode
             return Response({"message": "Picture added successfully.", "id": new_id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-    def list(self, request):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request):
+    def retrieve(self, request, pk=None):
         instance = self.get_object()
         
         # Get the image path

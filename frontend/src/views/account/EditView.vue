@@ -11,7 +11,6 @@
                         <v-file-input :rules="pfprules" @change="previewImage" @click:clear="imagePreview = null"
                             accept="image/png, image/jpeg" label="Avatar" prepend-icon="mdi-camera">
                         </v-file-input>
-                        <!-- <image-uploader :pfp=user.pfp></image-uploader> -->
                     </v-col>
 
                     <v-col>
@@ -117,9 +116,6 @@ const looking_forRules = [
 
 const handleSubmit = async () => {
     user.value.tags = user.value.tags?.map(tag => tag.id);
-
-
-
     if (selectedFile.value) {
         const formdata = new FormData();
         formdata.append('image', selectedFile.value);
@@ -143,10 +139,11 @@ const previewImage = async (event) => {
 const fetchUser = async () => {
     const fetchedUser = await ApiClient.getUser();
     const fetchedTags = await ApiClient.getUserTags(fetchedUser.id);
-    const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
-
-    if (fetchedUserPfp) {
-        pfp.value = fetchedUserPfp;
+    if (fetchedUser.pfp) {
+        const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
+        if (fetchedUserPfp) {
+            pfp.value = fetchedUserPfp;
+        }
     }
 
     user.value.id = fetchedUser.id;
@@ -170,8 +167,6 @@ onMounted(() => {
 computed(() => {
     filteredTags();
 });
-
-
 
 watch(search, () => {
     // Reset scroll position when search changes
