@@ -167,4 +167,3 @@ frontend/package-lock.lock
 .vscode/
 
 backend/pictures
-backend/schema.yml
