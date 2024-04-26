@@ -1,5 +1,5 @@
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, ListModelMixin, DestroyModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -9,7 +9,6 @@ from ..serializers import PictureSerializer
 from django.http import HttpResponse
 
 import os
-
 
 class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyModelMixin):
     queryset = Picture.objects.all()
@@ -41,7 +40,6 @@ class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyM
         response = HttpResponse(image_data, content_type='image/jpeg')
         response['Content-Disposition'] = 'attachment; filename="image.jpg"'
         return response
-
 
     def destroy(self, request):
         instance = self.get_object()
