@@ -4,9 +4,13 @@
             <v-container>
                 <v-row>
                     <v-col>
-                        <v-img cover class="rounded-circle border border-secondary border-lg" width="100" height="100"
-                            :src="user.pfp">
+                        <v-img cover class="rounded-circle border border-secondary border-lg mr-3" width="100"
+                            height="100" :src="pfp">
+                            <v-img cover v-if="imagePreview" :src="imagePreview" width="100" height="100"></v-img>
                         </v-img>
+                        <v-file-input :rules="pfprules" @change="previewImage" @click:clear="imagePreview = null"
+                            accept="image/png, image/jpeg" label="Avatar" prepend-icon="mdi-camera">
+                        </v-file-input>
                     </v-col>
 
                     <v-col>
@@ -25,15 +29,17 @@
                 <v-row>
                     <v-col>
                         <v-card-subtitle>
-                            <v-text-field v-model="user.bio" label="Bio" type="bio" :rules="bioRules" :value="user.bio" required />
+                            <v-text-field v-model="user.bio" label="Bio" type="bio" :rules="bioRules" :value="user.bio"
+                                required />
                         </v-card-subtitle>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
                         <v-card-subtitle>
-                            <v-text-field v-model="user.looking_for" :rules="looking_forRules" label="Préférences de recherche" type="looking_for"
-                                :value="user.looking_for" required />
+                            <v-text-field v-model="user.looking_for" :rules="looking_forRules"
+                                label="Préférences de recherche" type="looking_for" :value="user.looking_for"
+                                required />
                         </v-card-subtitle>
                     </v-col>
                 </v-row>
@@ -66,20 +72,19 @@
 </template>
 
 <script setup>
-import { store } from '@/store';
-import { setError } from '@/store';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
-import axios from 'axios';
 import { computed } from 'vue';
+import { ApiClient } from '@/clients/apiClient.js';
+import { watch } from 'vue';
+import router from '@/router';
+// import ImageUploader from '@/components/ImageUploader.vue';
 
-const user = ref({
-    username: ref(''),
-    bio: ref(''),
-    looking_for: ref(''),
-    pfp: ref('https://picsum.photos/170'),
-    tags: ref([])
-});
+const user = ref({});
+const pfp = ref({});
+
+const imagePreview = ref(null);
+const selectedFile = ref(null);
 
 const all_tags = [];
 const list_tags = ref([]);
@@ -87,6 +92,13 @@ const list_tags = ref([]);
 const showTagList = ref(false);
 const search = ref('');
 const uninitialized = ref(localStorage.getItem('uninitialized'));
+
+
+const pfprules = ref([
+    v => !v,
+    v => !v.length,
+    v => v[0].size < 200000 || 'Avatar size should be less than 2 MB!'
+])
 
 const usernameRules = [
     v => !!v || 'Le nom d\'utilisateur est obligatoire',
@@ -104,67 +116,57 @@ const looking_forRules = [
 
 const handleSubmit = async () => {
     user.value.tags = user.value.tags?.map(tag => tag.id);
+    if (selectedFile.value) {
+        const formdata = new FormData();
+        formdata.append('image', selectedFile.value);
+        user.value.pfp = await ApiClient.addPicture(formdata);
+    }
 
-    const jsonForm = JSON.stringify(user.value);
+    const response = await ApiClient.updateUser(JSON.stringify(user.value), user.value.id);
 
-    axios.patch(store.routes['USER_DETAIL'], jsonForm, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }, { withCredentials: true }).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        uninitialized.value = false;
-        setError({message:'L\'utilisateur a été mis à jour'},'success');
-        localStorage.setItem('uninitialized', false);
+    if (response) {
         router.push({ name: 'account-show', replace: true, force: true });
-    });
+    }
 };
 
+const previewImage = async (event) => {
+    selectedFile.value = event.target.files[0];
+    if (selectedFile) {
+        imagePreview.value = URL.createObjectURL(selectedFile.value);
+    }
+}
+
 const fetchUser = async () => {
-    axios.get(store.routes['USER_DETAIL']).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        user.value = response.data;
-    });
+    const fetchedUser = await ApiClient.getUser();
+    const fetchedTags = await ApiClient.getUserTags(fetchedUser.id);
+    if (fetchedUser.pfp) {
+        const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
+        if (fetchedUserPfp) {
+            pfp.value = fetchedUserPfp;
+        }
+    }
+
+    user.value.id = fetchedUser.id;
+    user.value.username = fetchedUser.username;
+    user.value.bio = fetchedUser.bio;
+    user.value.looking_for = fetchedUser.looking_for;
+    user.value.pfp = fetchedUser.pfp;
+    user.value.tags = fetchedTags;
 };
 
 const fetchTags = async () => {
-    axios.get(store.routes['TAG_LIST']).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        all_tags.push(...response.data);
-    });
-};
-
-const fetchUserTags = async () => {
-    axios.get(store.routes['USER_TAGS']).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        user.value.tags = response.data;
-    });
+    const fetchedTags = await ApiClient.getTags();
+    all_tags.push(...fetchedTags);
 };
 
 onMounted(() => {
     fetchUser();
     fetchTags();
-    fetchUserTags();
 });
 
 computed(() => {
     filteredTags();
 });
-
-import { watch } from 'vue';
-import router from '@/router';
 
 watch(search, () => {
     // Reset scroll position when search changes
@@ -186,33 +188,25 @@ const filteredTags = () => {
 }
 
 const openTagList = () => {
-    showTagList.value = true; // Show the tag list
+    showTagList.value = true;
 };
 
-const addTag = (tag) => {
-    axios.post(store.routes['USER_TAG_ADD'], JSON.stringify(tag))
-        .catch((error) => {
-            console.error(error.response.data);
-            setError(error.response.data,'error');
-            return error
-        }).then(response => {
-            user.value.tags.push(tag);
-            list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
-        });
-
-    showTagList.value = false;
-    search.value = '';
+const addTag = async (tag) => {
+    const jsonTag = JSON.stringify(tag);
+    const response = await ApiClient.addUserTag(jsonTag);
+    if (response) {
+        user.value.tags.push(tag);
+        showTagList.value = false;
+        search.value = '';
+    }
 }
 
-const deleteTag = (tag) => {
-    user.value.tags = user.value.tags.filter((t) => t.id !== tag.id);
-    axios.delete(store.routes['USER_TAG_REMOVE'], { data: JSON.stringify(tag) })
-        .catch((error) => {
-            console.error(error.response.data);
-            setError(error.response.data,'error');
-            return error
-        }).then(response => {
-            list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
-        });
+const deleteTag = async (tag) => {
+    const jsonTag = JSON.stringify(tag);
+    const response = await ApiClient.deleteUserTag(jsonTag);
+    if (response) {
+        user.value.tags = user.value.tags.filter((t) => t.id !== tag.id);
+        list_tags.value = all_tags.filter((tag) => !user.value.tags.includes(tag))
+    }
 }
 </script>

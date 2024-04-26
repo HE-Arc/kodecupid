@@ -1,10 +1,10 @@
 <template v-if="config">
-    <v-card v-model="user" class="rounded-xl">
+    <v-card class="rounded-xl">
         <v-container>
             <v-row>
                 <v-col>
                     <v-img cover class="rounded-circle border border-secondary border-lg" width="100" height="100"
-                        :src="user.pfp">
+                        :src=pfp>
                     </v-img>
                 </v-col>
 
@@ -35,46 +35,31 @@
 </template>
 
 <script setup>
-import { store } from '@/store';
-import { setError } from '@/store';
+
 import { ref } from 'vue';
 import { onMounted } from 'vue';
-import axios from 'axios';
+import { ApiClient } from '@/clients/apiClient.js';
 
-const user = ref({
-    username: ref(''),
-    bio: ref(''),
-    looking_for: ref(''),
-    pfp: ref('https://picsum.photos/170'),
-    tags: ref([])
-});
+const user = ref({});
+const pfp = ref({});
 
+const fetchUser = async () => {
+    const fetchedUser = await ApiClient.getUser();
+    const fetchedTags = await ApiClient.getUserTags(fetchedUser.id);
+    const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
 
-const fetchUser = async ()=> {
-    await axios.get(store.routes['USER_DETAIL']).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        console.log(response.data);
-        user.value = response.data;
-    });
-};
+    if (fetchedUserPfp) {
+        pfp.value = fetchedUserPfp;
+    }
 
-const fetchUserTags = async () => {
-    axios.get(store.routes['USER_TAGS']).catch((error) => {
-        console.error(error.response.data);
-        setError(error.response.data,'error');
-        return error
-    }).then(response => {
-        console.log('user tags', response.data);
-        user.value.tags = response.data;
-    });
-};
-
+    user.value.username = fetchedUser.username;
+    user.value.bio = fetchedUser.bio;
+    user.value.looking_for = fetchedUser.looking_for;
+    user.value.pfp = fetchedUser.pfp;
+    user.value.tags = fetchedTags;
+}
 
 onMounted(() => {
     fetchUser();
-    fetchUserTags();
 });
 </script>
