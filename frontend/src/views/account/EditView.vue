@@ -4,9 +4,13 @@
             <v-container>
                 <v-row>
                     <v-col>
-                        <v-img cover class="rounded-circle border border-secondary border-lg" width="100" height="100"
-                            :src="user.pfp">
+                        <v-img cover class="rounded-circle border border-secondary border-lg mr-3" width="100"
+                            height="100" :src="pfp">
+                            <v-img cover v-if="imagePreview" :src="imagePreview" width="100" height="100"></v-img>
                         </v-img>
+                        <v-file-input :rules="pfprules" @change="previewImage" @click:clear="imagePreview = null"
+                            accept="image/png, image/jpeg" label="Avatar" prepend-icon="mdi-camera">
+                        </v-file-input>
                     </v-col>
 
                     <v-col>
@@ -74,8 +78,13 @@ import { computed } from 'vue';
 import { ApiClient } from '@/clients/apiClient.js';
 import { watch } from 'vue';
 import router from '@/router';
+// import ImageUploader from '@/components/ImageUploader.vue';
 
 const user = ref({});
+const pfp = ref({});
+
+const imagePreview = ref(null);
+const selectedFile = ref(null);
 
 const all_tags = [];
 const list_tags = ref([]);
@@ -83,6 +92,13 @@ const list_tags = ref([]);
 const showTagList = ref(false);
 const search = ref('');
 const uninitialized = ref(localStorage.getItem('uninitialized'));
+
+
+const pfprules = ref([
+    v => !v,
+    v => !v.length,
+    v => v[0].size < 200000 || 'Avatar size should be less than 2 MB!'
+])
 
 const usernameRules = [
     v => !!v || 'Le nom d\'utilisateur est obligatoire',
@@ -100,7 +116,12 @@ const looking_forRules = [
 
 const handleSubmit = async () => {
     user.value.tags = user.value.tags?.map(tag => tag.id);
-    
+    if (selectedFile.value) {
+        const formdata = new FormData();
+        formdata.append('image', selectedFile.value);
+        user.value.pfp = await ApiClient.addPicture(formdata);
+    }
+
     const response = await ApiClient.updateUser(JSON.stringify(user.value), user.value.id);
 
     if (response) {
@@ -108,9 +129,22 @@ const handleSubmit = async () => {
     }
 };
 
+const previewImage = async (event) => {
+    selectedFile.value = event.target.files[0];
+    if (selectedFile) {
+        imagePreview.value = URL.createObjectURL(selectedFile.value);
+    }
+}
+
 const fetchUser = async () => {
     const fetchedUser = await ApiClient.getUser();
     const fetchedTags = await ApiClient.getUserTags(fetchedUser.id);
+    if (fetchedUser.pfp) {
+        const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
+        if (fetchedUserPfp) {
+            pfp.value = fetchedUserPfp;
+        }
+    }
 
     user.value.id = fetchedUser.id;
     user.value.username = fetchedUser.username;
@@ -134,8 +168,6 @@ computed(() => {
     filteredTags();
 });
 
-
-
 watch(search, () => {
     // Reset scroll position when search changes
     const list = document.querySelector('.tag-list .v-list');
@@ -156,7 +188,7 @@ const filteredTags = () => {
 }
 
 const openTagList = () => {
-    showTagList.value = true; // Show the tag list
+    showTagList.value = true;
 };
 
 const addTag = async (tag) => {

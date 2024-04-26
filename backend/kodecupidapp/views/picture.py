@@ -6,6 +6,9 @@ from rest_framework.permissions import IsAuthenticated
 from ..models import Picture
 from ..serializers import PictureSerializer
 
+from django.http import HttpResponse
+
+import os
 
 class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyModelMixin):
     queryset = Picture.objects.all()
@@ -13,18 +16,30 @@ class PictureView(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyM
     permission_classes = [IsAuthenticated]
 
     def create(self, request):
-        serializer = self.get_serializer(data=request.data)
+        modified_data = request.data.copy()
+        modified_data['user'] = request.user.id
+
+        serializer = self.get_serializer(data=modified_data)
         if serializer.is_valid():
-            if request.user.id == int(request.data["user"]):
-                serializer.save()
-                return Response({"message": "Picture added successfully."}, status=status.HTTP_201_CREATED)
-            return Response({"message": "Picture cannot be added to another user."}, status=status.HTTP_403_FORBIDDEN)
+            instance = serializer.save()
+            # Access the ID of the newly created instance
+            new_id = instance.id
+            return Response({"message": "Picture added successfully.", "id": new_id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request):
+    def retrieve(self, request, pk=None):
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        # Get the image path
+        image_path = instance.image.path
+        # Read the image data
+        with open(image_path, 'rb') as image_file:
+            image_data = image_file.read()
+
+        # Return the image data in an HTTP response
+        response = HttpResponse(image_data, content_type='image/jpeg')
+        response['Content-Disposition'] = 'attachment; filename="image.jpg"'
+        return response
 
     def destroy(self, request):
         instance = self.get_object()

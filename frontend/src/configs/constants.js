@@ -38,7 +38,9 @@ const routes_api = {
     'user-add-tag':'/api/users/add_tag/',
     'user-remove-tag': '/api/users/remove_tag/',
     'user-current':'/api/users/current/',
-    'user-tags':'/api/users/{id}/tags/',
+    'user-tags-list':'/api/users/{id}/tags/',
+    'user-pictures-list':'/api/users/{id}/pictures/',
+    'user-add-picture':'/api/users/add_picture/',
 
     'user-detail':'/api/users/{id}/',
 
@@ -63,7 +65,9 @@ const RouteEnum = {
     USER_ADD_TAG: 'user-add-tag',
     USER_REMOVE_TAG: 'user-remove-tag',
     USER_CURRENT: 'user-current',
-    USER_TAGS: 'user-tags',
+    USER_TAGS_LIST: 'user-tags-list',
+    USER_PICTURES_LIST: 'user-pictures-list',
+    USER_ADD_PICTURE: 'user-add-picture',
 
     USER_DETAIL: 'user-detail',
 
