@@ -34,9 +34,15 @@
 </template>
 
 <script setup>
+import axios from 'axios';
+
 import { ref } from 'vue';
-import { ApiClient } from '@/clients/apiClient.js';
+import { store } from '@/store';
+import { setError } from '@/store';
+
 import router from '@/router';
+
+const uninitialized = ref(localStorage.getItem('uninitialized'));
 
 const form = ref({
   username: '',
@@ -56,15 +62,31 @@ const passwordRules = [
 const handleSubmit = async () => {
   const jsonForm = JSON.stringify(form.value);
 
-  const response = await ApiClient.signinUser(jsonForm);
-
-  if (response){
-    if (localStorage.getItem('uninitialized') === 'true') {
-          router.push({name: 'account-edit', replace: true, force: true});
-        } else {
-          router.push({name: 'account-show', replace: true, force: true});
+  axios.post(store.routes['USER_SIGNIN'], jsonForm, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `anonymous`
+    }
+  })
+    .catch((error) => {
+      console.error("Signin error", error.response.data);
+      setError(error.response.data,'error');
+      return error
+    })
+    .then(response => {
+      if (response.status === 200) {
+        localStorage.setItem('accessToken', response.data.access);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
+        localStorage.setItem('refreshToken', response.data.refresh);
+        if (uninitialized.value) {
+          router.push({ name: 'account-edit', replace: true, force: true });
         }
-  }
+        else {
+          router.push({ name: 'account-show', replace: true, force: true });
+        }
+
+      }
+    });
 };
 
 </script>

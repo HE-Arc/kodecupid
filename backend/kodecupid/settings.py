@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'corsheaders',
     "kodecupidapp",
     "rest_framework",
-    'drf_spectacular',
 ]
 
 REST_FRAMEWORK = {
@@ -58,7 +57,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 MIDDLEWARE = [
@@ -89,16 +87,6 @@ TEMPLATES = [
         },
     },
 ]
-
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'KodeCupid API',
-    'DESCRIPTION': 'KodeCupid API Documentation',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-}
-
-MEDIA_URL = '/files/'
-MEDIA_ROOT = BASE_DIR
 
 WSGI_APPLICATION = 'kodecupid.wsgi.application'
 
