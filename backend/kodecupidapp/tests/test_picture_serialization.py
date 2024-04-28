@@ -19,7 +19,7 @@ class PictureSerializerTest(TestCase):
         with Image.new('RGB', (100, 100)) as img:
             img.save(cls.image, 'JPEG')
 
-        cls.test_user = User.objects.create_user(username='testuser', password='12345')
+        cls.test_user = User.objects.create_user(username='testuser', password='12345', sex=False, looking_for=True)
 
         cls.picture = Picture.objects.create(
             user=cls.test_user,

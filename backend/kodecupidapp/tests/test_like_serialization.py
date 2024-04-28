@@ -7,8 +7,8 @@ User = get_user_model()
 
 class LikeSerializerTestCase(TestCase):
     def setUp(self):
-        self.user1 = User.objects.create_user(username='user1', password='testpass123')
-        self.user2 = User.objects.create_user(username='user2', password='testpass123')
+        self.user1 = User.objects.create_user(username='user1', password='testpass123', sex=True, looking_for=False)
+        self.user2 = User.objects.create_user(username='user2', password='testpass123', sex=False, looking_for=True)
         self.factory = RequestFactory()
 
     def test_serializer_with_valid_data(self):
