@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('kodecupidapp', '0004_remove_tag_users_user_tags'),
+        ('kodecupidapp', '0007_user_looking_for'),
     ]
 
     operations = [
