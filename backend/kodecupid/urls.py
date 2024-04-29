@@ -27,6 +27,7 @@ from kodecupidapp.views import (
     PictureView,
     LikeView,
     SwipeView,
+    MessageView,
 )
 
 from rest_framework_simplejwt.views import (
@@ -40,6 +41,7 @@ router = routers.DefaultRouter()
 router.register('users', UserView, basename='user')
 router.register('tags', TagView, basename='tag')
 router.register('pictures', PictureView, basename='picture')
+router.register('messages', MessageView, basename='message')
 router.register('likes', LikeView, basename='like')
 router.register('swipes', SwipeView, basename='swipe')
 

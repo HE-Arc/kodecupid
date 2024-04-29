@@ -2,3 +2,4 @@ from .user import UserSerializer, UserRegistrationSerializer, UserConfigurationS
 from .tag import TagSerializer
 from .picture import PictureSerializer
 from .like import LikeSerializer
+from .message import MessageSerializer
