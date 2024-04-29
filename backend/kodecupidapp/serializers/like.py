@@ -14,6 +14,9 @@ class LikeSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         target_user = attrs['target_user']
 
+        if(user == target_user):
+            raise ValidationError("You sure you like yourself this much? Liking yourself isn't allowed here.")
+
         if Like.objects.filter(source_user=user, target_user=target_user).exists():
             raise ValidationError('You have already liked this user.')
 
