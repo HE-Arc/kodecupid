@@ -14,7 +14,10 @@ class MessageSerializer(serializers.ModelSerializer):
         source_user = self.context['request'].user
         target_user = attrs['target_user']
 
-        if not Like.objects.filter(source_user=target_user, target_user=source_user).exists():
+        userLikedMe = Like.objects.filter(source_user=target_user, target_user=source_user).exists()
+        iLikedUser = Like.objects.filter(source_user=source_user, target_user=target_user).exists()
+
+        if not userLikedMe or not iLikedUser:
             raise ValidationError('Messages can only be sent to users when a match occured.')
 
         return attrs
