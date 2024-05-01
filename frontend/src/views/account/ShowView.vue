@@ -68,10 +68,11 @@ const user = ref({});
 const fetchUser = async () => {
     const fetchedUser = await ApiClient.getUser();
     const fetchedTags = await ApiClient.getUserTags(fetchedUser.id);
-    const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
-
-    if (fetchedUserPfp) {
-        user.value.pfp_src = fetchedUserPfp;
+    if (fetchedUser.pfp){
+        const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
+        if (fetchedUserPfp) {
+            user.value.pfp_src = fetchedUserPfp;
+        }
     }
 
     const fetchedPictures = await ApiClient.getPictures();

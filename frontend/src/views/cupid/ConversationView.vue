@@ -74,7 +74,6 @@ function scrollToBottom() {
     nextTick(() => {
         const scrollElement = document.querySelector('.scrollable-container');
         if (!scrollElement) return;
-        console.log("ta soeur la pute");
         scrollElement.scrollTop = scrollElement.scrollHeight;
     });
 }
@@ -106,11 +105,11 @@ const fetchConversation = async () => {
     const target_user = router.currentRoute.value.params.id;
     if (target_user) {
         const fetchedUser = await ApiClient.getUserById(target_user);
-
-        const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
-
-        if (fetchedUserPfp) {
-            user_target.value.pfp_src = fetchedUserPfp;
+        if (fetchedUser.pfp) {
+            const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
+            if (fetchedUserPfp) {
+                user_target.value.pfp_src = fetchedUserPfp;
+            }
         }
 
         user_target.value.id = fetchedUser.id;
@@ -125,7 +124,6 @@ const fetchConversation = async () => {
 
             conversation.value = fetchedConversation;
             if (fetchedConversation.length > lastConversationLength.value) {
-                console.log("ta soeur en enfer putain");
                 scrollToBottom();
             }
             

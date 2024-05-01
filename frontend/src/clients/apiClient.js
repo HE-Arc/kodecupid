@@ -74,7 +74,6 @@ export class ApiClient {
   }
 
   static async likeUser(id) {
-    console.log('likeUser', id);
     try {
       await axios.post(handleRoute(RouteEnum.LIKE_LIST), {target_user_id: id});
       return true;
