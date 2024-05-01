@@ -91,7 +91,7 @@ const { user, details } = defineProps({
     },
     details: {
         type: Boolean,
-        required: true
+        required: false
     }
 });
 
