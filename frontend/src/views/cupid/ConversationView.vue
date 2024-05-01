@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { ApiClient } from '@/clients/apiClient.js';
 
 import router from '@/router';
@@ -51,10 +51,8 @@ onMounted(() => {
 
     setInterval(() => {
         fetchConversation();
-        window.scrollTo(0, document.body.scrollHeight);
     }, 5000);
 });
-
 
 const sendMessage = async () => {
 
@@ -101,8 +99,6 @@ const fetchConversation = async () => {
             });
             conversation.value = fetchedConversation;
         }
-
-        
     }
 };
 </script>

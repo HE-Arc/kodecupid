@@ -4,7 +4,7 @@ from .picture import Picture
 
 class User(AbstractUser):
     # Add additional fields
-    bio = models.CharField(max_length=100)
+    bio = models.CharField(max_length=255)
     sex = models.BooleanField()
     looking_for = models.BooleanField()
     tags = models.ManyToManyField('kodecupidapp.Tag', related_name='tags')

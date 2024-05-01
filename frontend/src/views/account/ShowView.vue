@@ -10,12 +10,21 @@
 
                 <v-col>
                     <v-card-title>{{ user.username }}</v-card-title>
-                    <v-card-subtitle>{{ user.bio }}</v-card-subtitle>
-                    <v-card-subtitle>{{ user.looking_for ? 'Homme' : 'Femme' }}</v-card-subtitle>
+                    <v-card-subtitle>{{ user.sex ? 'Homme' : 'Femme' }}</v-card-subtitle>
                 </v-col>
 
                 <v-col>
                     <v-btn :to="{ name: 'account-edit' }" color="primary">Modifier mon profil</v-btn>
+                </v-col>
+            </v-row>
+
+            <v-divider class="my-4"></v-divider>
+
+            <v-row>
+                <v-col>
+                    <v-label>Bio:</v-label>
+                    <br>
+                    {{ user.bio }}
                 </v-col>
             </v-row>
 
@@ -75,7 +84,7 @@ const fetchUser = async () => {
 
     user.value.username = fetchedUser.username;
     user.value.bio = fetchedUser.bio;
-    user.value.looking_for = fetchedUser.looking_for;
+    user.value.sex = fetchedUser.sex;
     user.value.pfp = fetchedUser.pfp;
     user.value.tags = fetchedTags;
 }

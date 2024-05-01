@@ -1,60 +1,69 @@
 <template v-if="config">
-    <v-form id="edit-form" @submit.prevent="handleSubmit">
+    <v-form id="edit-form" ref="form" v-model="valid" @submit.prevent="handleSubmit">
         <v-card v-model="user" class="rounded-xl">
             <v-container>
                 <v-row>
                     <v-col>
-                        <v-img cover class="rounded-circle border border-secondary border-lg mr-3" width="100"
-                            height="100" :src="user.pfp_src">
-                            <v-img cover v-if="imagePreview" :src="imagePreview" width="100" height="100"></v-img>
-                        </v-img>
-                        <v-file-input :rules="pfprules" @change="previewImage" @click:clear="imagePreview = null"
-                            accept="image/png, image/jpeg" label="Avatar" prepend-icon="mdi-camera">
-                        </v-file-input>
+                        <div class="image-upload-container" style="position: relative; width: 200px; height: 200px;">
+                            <v-img cover class="rounded-circle border border-secondary border-lg mr-3"
+                                width="200" height="200" :src="imagePreview || user.pfp_src">
+                                <template v-slot:placeholder>
+                                    <v-row class="fill-height ma-0" align="center" justify="center">
+                                        <v-icon color="grey lighten-1" size="56">mdi-account-circle</v-icon>
+                                    </v-row>
+                                </template>
+                            </v-img>
+                            <v-file-input class="file-input-overlay" @change="previewImage" @click:clear="imagePreview = null"
+                                        accept="image/png, image/jpeg" label="Change Avatar" prepend-icon="mdi-camera"
+                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;">
+                            </v-file-input>
+                        </div>
                     </v-col>
 
                     <v-col>
-                        <v-btn form="edit-form" type="submit" color="primary" class="mr-4">Enregistrer</v-btn>
+                        <v-btn :disabled="!valid" form="edit-form" type="submit" color="primary" class="mr-4">Enregistrer</v-btn>
                         <v-btn v-if="uninitialized" :to="{ name: 'account-show' }"><v-icon> mdi-cancel</v-icon></v-btn>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
-                        <v-card-title>
-                            <v-text-field v-model="user.username" label="Nom d'utilisateur" type="username"
-                                :value="user.username" :rules="usernameRules" required />
-                        </v-card-title>
+                        <v-text-field v-model="user.username" label="Nom d'utilisateur" type="username" :value="user.username" :rules="usernameRules" required />
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
-                        <v-card-subtitle>
-                            <v-text-field v-model="user.bio" label="Bio" type="bio" :rules="bioRules" :value="user.bio"
-                                required />
-                        </v-card-subtitle>
+                        <v-textarea v-model="user.bio" label="Bio" type="bio" :rules="bioRules" :value="user.bio" required></v-textarea>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
-                        <v-card-subtitle>
-                            <!-- <v-text-field v-model="user.looking_for" :rules="looking_forRules"
-                                label="Préférences de recherche" type="looking_for" :value="user.looking_for"
-                                required /> -->
+                        <!-- Radio buttons for sex -->
+                        <v-row>
+                            <v-col cols="6">
+                                <v-label>Sexe</v-label>
+                                <v-radio-group v-model="user.sex" row>
+                                    <v-radio label="Homme" :value=true></v-radio>
+                                    <v-radio label="Femme" :value=false></v-radio>
+                                </v-radio-group>
+                            </v-col>
+                            <v-col cols="6" class="d-flex justify-center align-center">
+                                <v-img :src="sexImage" height="100px" class="rounded-circle shadow" />
+                            </v-col>
+                        </v-row>
 
-                            <v-row>
-                                <v-col>
-                                    <v-label>Recherche</v-label>
-                                    <v-radio-group v-model="user.looking_for" row>
-                                        <v-radio label="Homme" :value=true></v-radio>
-                                        <v-radio label="Femme" :value=false></v-radio>
-                                    </v-radio-group>
-                                </v-col>
-                                <v-col class="d-flex justify-center align-center">
-                                    <v-img :src="lookingForImage" height="100px" class="rounded-circle shadow" />
-                                </v-col>
-                            </v-row>
-
-                        </v-card-subtitle>
+                        <!-- Radio buttons for looking_for -->
+                        <v-row>
+                            <v-col cols="6">
+                            <v-label>Recherche</v-label>
+                            <v-radio-group v-model="user.looking_for" row>
+                                <v-radio label="Homme" :value=true></v-radio>
+                                <v-radio label="Femme" :value=false></v-radio>
+                            </v-radio-group>
+                            </v-col>
+                            <v-col cols="6" class="d-flex justify-center align-center">
+                                <v-img :src="lookingForImage" height="100px" class="rounded-circle shadow" />
+                            </v-col>
+                        </v-row>
                     </v-col>
                 </v-row>
 
@@ -138,12 +147,8 @@ const showTagList = ref(false);
 const search = ref('');
 const uninitialized = ref(localStorage.getItem('uninitialized'));
 
-
-const pfprules = ref([
-    v => !v,
-    v => !v.length,
-    v => v[0].size < 200000 || 'Avatar size should be less than 2 MB!'
-])
+const valid = ref(false);
+const form = ref(null);
 
 const usernameRules = [
     v => !!v || 'Le nom d\'utilisateur est obligatoire',
@@ -152,14 +157,15 @@ const usernameRules = [
 
 const bioRules = [
     v => !!v || 'La description (bio) est obligatoire',
-];
-
-const looking_forRules = [
-    v => !!v || 'Vos préférences de recherche sont obligatoires',
-    v => v.length >= 3 || 'Vos préférences de recherche doivent contenir min. 3 caractères'
+    v => v.length < 256 || 'Bio trop longue !'
 ];
 
 const handleSubmit = async () => {
+
+    if (!form.value.validate()) {
+        return;
+    }
+
     user.value.tags = user.value.tags?.map(tag => tag.id);
     if (selectedFile.value) {
         const formdata = new FormData();
@@ -227,6 +233,7 @@ const fetchUser = async () => {
     user.value.username = fetchedUser.username;
     user.value.bio = fetchedUser.bio;
     user.value.looking_for = fetchedUser.looking_for;
+    user.value.sex = fetchedUser.sex;
     user.value.pfp = fetchedUser.pfp;
     user.value.tags = fetchedTags;
 };
@@ -256,6 +263,10 @@ watch(search, () => {
 
 const lookingForImage = computed(() => {
   return user.value.looking_for ? '/giga_chad.jpg' : '/giga_female.jpg';
+});
+
+const sexImage = computed(() => {
+  return user.value.sex ? '/giga_chad.jpg' : '/giga_female.jpg';
 });
 
 const filteredTags = () => {
