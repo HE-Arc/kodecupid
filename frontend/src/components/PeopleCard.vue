@@ -3,7 +3,7 @@
         <v-card-item v-if=details>
             <v-container>
                 <v-row>
-                    <v-col cols="4">
+                    <v-col class="flex-grow-0 mr-4">
                         <v-img cover class="rounded-circle border border-secondary border-lg" width="200" height="200"
                             :src=user.pfp_src>
                         </v-img>
@@ -35,8 +35,9 @@
                     <v-col>
                         <v-label>Tags:</v-label>
                         <v-chip-group column>
-                            <v-chip v-if="user.tags && user.tags.length" v-for="tag in user.tags">{{ tag.name
-                                }}</v-chip>
+                            <v-chip v-if="user.tags && user.tags.length" v-for="tag in user.tags">
+                                {{ tag.name }}
+                            </v-chip>
                             <v-chip v-else>aucun</v-chip>
                         </v-chip-group>
                     </v-col>
@@ -47,23 +48,22 @@
                 <v-row>
                     <v-col v-if="user.pictures && user.pictures.length">
                         <v-carousel class="rounded-lg" show-arrows="hover">
-                            <v-carousel-item v-for="picture in user.pictures" :key="picture.id">
-                                <v-img cover class="rounded-lg" :src=picture.image_data></v-img>
-                            </v-carousel-item>
+                            <v-carousel-item v-for="picture in user.pictures" :key="picture.id"
+                                :src=picture.image_data></v-carousel-item>
                         </v-carousel>
                     </v-col>
 
                     <v-col v-else>
                         <p>Aucune image</p>
                     </v-col>
-                </v-row>    
+                </v-row>
 
             </v-container>
         </v-card-item>
         <v-card-item v-if=!details>
             <v-container>
                 <v-row>
-                    <v-col cols="4">
+                    <v-col cols="flex-grow-0 mr-4">
                         <v-img cover class="rounded-circle border border-secondary border-lg" width="200" height="200"
                             :src=user.pfp_src>
                         </v-img>

@@ -257,9 +257,7 @@ export class ApiClient {
 
   static async deletePicture(id) {
     try {
-      const response =
-          await axios.delete(handleRoute(RouteEnum.PICTURE_DETAIL, id));
-      setError(response.data, 'success');
+      await axios.delete(handleRoute(RouteEnum.PICTURE_DETAIL, id));
       return true;
     } catch (error) {
       console.error(error.response?.data);

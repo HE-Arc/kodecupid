@@ -5,34 +5,38 @@
                 <v-row>
                     <v-col>
                         <div class="image-upload-container" style="position: relative; width: 200px; height: 200px;">
-                            <v-img cover class="rounded-circle border border-secondary border-lg mr-3"
-                                width="200" height="200" :src="imagePreview || user.pfp_src">
+                            <v-img cover class="rounded-circle border border-secondary border-lg mr-3" width="200"
+                                height="200" :src="imagePreview || user.pfp_src">
                                 <template v-slot:placeholder>
                                     <v-row class="fill-height ma-0" align="center" justify="center">
                                         <v-icon color="grey lighten-1" size="56">mdi-account-circle</v-icon>
                                     </v-row>
                                 </template>
                             </v-img>
-                            <v-file-input class="file-input-overlay" @change="previewImage" @click:clear="imagePreview = null"
-                                        accept="image/png, image/jpeg" label="Change Avatar" prepend-icon="mdi-camera"
-                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;">
+                            <v-file-input class="file-input-overlay" @change="previewImage"
+                                @click:clear="imagePreview = null" accept="image/png, image/jpeg" label="Change Avatar"
+                                prepend-icon="mdi-camera"
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;">
                             </v-file-input>
                         </div>
                     </v-col>
 
                     <v-col>
-                        <v-btn :disabled="!valid" form="edit-form" type="submit" color="primary" class="mr-4">Enregistrer</v-btn>
+                        <v-btn :disabled="!valid" form="edit-form" type="submit" color="primary"
+                            class="mr-4">Enregistrer</v-btn>
                         <v-btn v-if="uninitialized" :to="{ name: 'account-show' }"><v-icon> mdi-cancel</v-icon></v-btn>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
-                        <v-text-field v-model="user.username" label="Nom d'utilisateur" type="username" :value="user.username" :rules="usernameRules" required />
+                        <v-text-field v-model="user.username" label="Nom d'utilisateur" type="username"
+                            :value="user.username" :rules="usernameRules" required />
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
-                        <v-textarea v-model="user.bio" label="Bio" type="bio" :rules="bioRules" :value="user.bio" required></v-textarea>
+                        <v-textarea v-model="user.bio" label="Bio" type="bio" :rules="bioRules" :value="user.bio"
+                            required></v-textarea>
                     </v-col>
                 </v-row>
                 <v-row>
@@ -54,11 +58,11 @@
                         <!-- Radio buttons for looking_for -->
                         <v-row>
                             <v-col cols="6">
-                            <v-label>Recherche</v-label>
-                            <v-radio-group v-model="user.looking_for" row>
-                                <v-radio label="Homme" :value=true></v-radio>
-                                <v-radio label="Femme" :value=false></v-radio>
-                            </v-radio-group>
+                                <v-label>Recherche</v-label>
+                                <v-radio-group v-model="user.looking_for" row>
+                                    <v-radio label="Homme" :value=true></v-radio>
+                                    <v-radio label="Femme" :value=false></v-radio>
+                                </v-radio-group>
                             </v-col>
                             <v-col cols="6" class="d-flex justify-center align-center">
                                 <v-img :src="lookingForImage" height="100px" class="rounded-circle shadow" />
@@ -95,26 +99,17 @@
                 <v-row>
                     <v-col>
                         <v-label>Images:</v-label>
-                        <v-file-input @change="addPicture" accept="image/png, image/jpeg"
-                            label="Image" prepend-icon="mdi-camera">
+                        <v-file-input @change="addPicture" accept="image/png, image/jpeg" label="Image"
+                            prepend-icon="mdi-camera">
                         </v-file-input>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col v-if="user.pictures && user.pictures.length">
                         <v-carousel class="rounded-lg" show-arrows="hover">
-                            <v-carousel-item v-for="picture in user.pictures" :key="picture.id">
-                                <v-card v-if="picture.image_data">
-                                    <v-card-actions>
-                                        <v-spacer></v-spacer>
-                                        <v-btn icon @click="deletePicture(picture)">
-                                            <v-icon class="text-red">mdi-delete</v-icon>
-                                        </v-btn>
-                                    </v-card-actions>
-                                    <v-card-item>
-                                        <v-img cover class="rounded-lg" :src=picture.image_data></v-img>
-                                    </v-card-item>
-                                </v-card>
+                            <v-carousel-item v-for="picture in user.pictures" :key="picture.id" :src=picture.image_data>
+                                <v-btn class="text-red" icon="mdi-delete" variant="text" @click="deletePicture(picture)">
+                                </v-btn>
                             </v-carousel-item>
                         </v-carousel>
                     </v-col>
@@ -225,7 +220,7 @@ const fetchUser = async () => {
 
     if (fetchedPictures) {
         user.value.pictures = fetchedPictures;
-    }else{
+    } else {
         user.value.pictures = [];
     }
 
@@ -262,11 +257,11 @@ watch(search, () => {
 
 
 const lookingForImage = computed(() => {
-  return user.value.looking_for ? '/giga_chad.jpg' : '/giga_female.jpg';
+    return user.value.looking_for ? '/giga_chad.jpg' : '/giga_female.jpg';
 });
 
 const sexImage = computed(() => {
-  return user.value.sex ? '/giga_chad.jpg' : '/giga_female.jpg';
+    return user.value.sex ? '/giga_chad.jpg' : '/giga_female.jpg';
 });
 
 const filteredTags = () => {

@@ -1,8 +1,8 @@
 <template>
     <v-container>
-        <v-row v-if="match.length > 0" class="d-flex flex-row">
-            <v-col :cols="12 / Math.sqrt(match.length)" v-for="user in match">
-                <PeopleCard @click="showConversation(user.id)" :user=user />
+        <v-row v-if="match.length > 0">
+            <v-col v-for="user in match">
+                <PeopleCard @click="showConversation(user.id)" :user=user min-width="250"/>
             </v-col>
         </v-row>
         <v-row v-else>

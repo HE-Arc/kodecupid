@@ -45,9 +45,7 @@
             <v-row>
                 <v-col v-if="user.pictures && user.pictures.length">
                     <v-carousel class="rounded-lg" show-arrows="hover">
-                        <v-carousel-item v-for="picture in user.pictures" :key="picture.id">
-                            <v-img cover class="rounded-lg" :src=picture.image_data></v-img>
-                        </v-carousel-item>
+                        <v-carousel-item v-for="picture in user.pictures" :key="picture.id" :src=picture.image_data></v-carousel-item>
                     </v-carousel>
                 </v-col>
 
