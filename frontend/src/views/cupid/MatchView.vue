@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-row v-if="match.length > 0" class="d-flex flex-row">
-            <v-col cols="6" v-for="user in match">
+            <v-col :cols="match.length%2 ? 12 : 6" v-for="user in match">
                 <PeopleCard :user=user />
             </v-col>
         </v-row>
@@ -28,8 +28,12 @@ const match = ref([]);
 const fetchUserMatch = async () => {
     match.value = await ApiClient.getUserMatches();
 
+    if (!match.value) {
+        return;
+    }
+
     match.value.forEach(async (user) => {
-        console.log(user);
+
         if (user.pfp) {
             const fetchedUserPfp = await ApiClient.getPicture(user.pfp);
             if (fetchedUserPfp) {

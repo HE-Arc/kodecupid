@@ -23,16 +23,17 @@
                 </v-row>
             </v-container>
         </v-card-item>
-        <v-card-item>
-            <v-img cover class=" rounded-lg" src="https://picsum.photos/160">
-            </v-img>
+        <v-card-item v-if="user.pictures && user.pictures.length">
+            <v-carousel show-arrows="hover">
+                <v-carousel-item v-for="picture in user.pictures" :key="picture.id">
+                    <v-img cover class="rounded-lg" :src=picture.image_data></v-img>
+                </v-carousel-item>
+            </v-carousel>
         </v-card-item>
     </v-card>
 </template>
 
 <script setup>
-
-
 
 const { user, pfp } = defineProps({
     user: {

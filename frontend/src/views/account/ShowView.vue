@@ -4,14 +4,14 @@
             <v-row>
                 <v-col>
                     <v-img cover class="rounded-circle border border-secondary border-lg" width="100" height="100"
-                        :src=pfp>
+                        :src=user.pfp_src>
                     </v-img>
                 </v-col>
 
                 <v-col>
                     <v-card-title>{{ user.username }}</v-card-title>
                     <v-card-subtitle>{{ user.bio }}</v-card-subtitle>
-                    <v-card-subtitle>{{ user.looking_for }}</v-card-subtitle>
+                    <v-card-subtitle>{{ user.looking_for ? 'Homme' : 'Femme' }}</v-card-subtitle>
                 </v-col>
 
                 <v-col>
@@ -30,6 +30,22 @@
                     </v-chip-group>
                 </v-col>
             </v-row>
+
+            <v-divider class="my-4"></v-divider>
+
+            <v-row>
+                <v-col v-if="user.pictures && user.pictures.length">
+                    <v-carousel show-arrows="hover">
+                        <v-carousel-item v-for="picture in user.pictures" :key="picture.id">
+                            <v-img cover class="rounded-lg" :src=picture.image_data></v-img>
+                        </v-carousel-item>
+                    </v-carousel>
+                </v-col>
+
+                <v-col v-else>
+                    <p>Aucune image</p>
+                </v-col>
+            </v-row>
         </v-container>
     </v-card>
 </template>
@@ -41,7 +57,6 @@ import { onMounted } from 'vue';
 import { ApiClient } from '@/clients/apiClient.js';
 
 const user = ref({});
-const pfp = ref({});
 
 const fetchUser = async () => {
     const fetchedUser = await ApiClient.getUser();
@@ -49,7 +64,13 @@ const fetchUser = async () => {
     const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
 
     if (fetchedUserPfp) {
-        pfp.value = fetchedUserPfp;
+        user.value.pfp_src = fetchedUserPfp;
+    }
+
+    const fetchedPictures = await ApiClient.getPictures();
+
+    if (fetchedPictures) {
+        user.value.pictures = fetchedPictures;
     }
 
     user.value.username = fetchedUser.username;

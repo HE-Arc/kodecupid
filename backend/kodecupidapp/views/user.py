@@ -11,6 +11,8 @@ from ..serializers import UserSerializer, UserRegistrationSerializer, UserConfig
 
 from rest_framework.decorators import action
 
+import os
+
 class UserView(GenericViewSet, CreateModelMixin):
     queryset = User.objects.all()
 
@@ -99,6 +101,12 @@ class UserView(GenericViewSet, CreateModelMixin):
     @action(detail=False, methods=['post'])
     def add_picture(self, request):
         user = request.user
+
+        #if user.pfp delete the previous pfp
+        if user.pfp:
+            user.pfp.delete()
+            os.remove(user.pfp.path)
+
         user.pfp = request.data['pfp']
         user.save()
         return Response({"message": "Picture added successfully."}, status=status.HTTP_201_CREATED)

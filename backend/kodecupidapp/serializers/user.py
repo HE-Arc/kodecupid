@@ -35,7 +35,7 @@ class UserConfigurationSerializer(serializers.ModelSerializer):
         instance.bio=validated_data.get('bio', instance.bio)
         instance.looking_for=validated_data.get('looking_for', instance.looking_for)
         instance.pfp=validated_data.get('pfp', instance.pfp)
-        instance.pfp=validated_data.get('sex', instance.sex)
+        instance.sex=validated_data.get('sex', instance.sex)
 
         instance.save()
         return instance

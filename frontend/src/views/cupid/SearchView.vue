@@ -76,6 +76,12 @@ const fetchUser = async () => {
         }
     }
 
+    const fetchedPictures = await ApiClient.getPictures();
+
+    if (fetchedPictures) {
+        user.value.pictures = fetchedPictures;
+    }
+
     user.value.id = fetchedUser.id;
     user.value.username = fetchedUser.username;
     user.value.bio = fetchedUser.bio;

@@ -5,7 +5,7 @@
                 <v-row>
                     <v-col>
                         <v-img cover class="rounded-circle border border-secondary border-lg mr-3" width="100"
-                            height="100" :src="pfp">
+                            height="100" :src="user.pfp_src">
                             <v-img cover v-if="imagePreview" :src="imagePreview" width="100" height="100"></v-img>
                         </v-img>
                         <v-file-input :rules="pfprules" @change="previewImage" @click:clear="imagePreview = null"
@@ -37,9 +37,23 @@
                 <v-row>
                     <v-col>
                         <v-card-subtitle>
-                            <v-text-field v-model="user.looking_for" :rules="looking_forRules"
+                            <!-- <v-text-field v-model="user.looking_for" :rules="looking_forRules"
                                 label="Préférences de recherche" type="looking_for" :value="user.looking_for"
-                                required />
+                                required /> -->
+
+                            <v-row>
+                                <v-col>
+                                    <v-label>Recherche</v-label>
+                                    <v-radio-group v-model="user.looking_for" row>
+                                        <v-radio label="Homme" :value=true></v-radio>
+                                        <v-radio label="Femme" :value=false></v-radio>
+                                    </v-radio-group>
+                                </v-col>
+                                <v-col class="d-flex justify-center align-center">
+                                    <v-img :src="lookingForImage" height="100px" class="rounded-circle shadow" />
+                                </v-col>
+                            </v-row>
+
                         </v-card-subtitle>
                     </v-col>
                 </v-row>
@@ -66,6 +80,39 @@
                         </v-chip-group>
                     </v-col>
                 </v-row>
+
+                <v-divider class="my-4"></v-divider>
+
+                <v-row>
+                    <v-col>
+                        <v-label>Images:</v-label>
+                        <v-file-input :rules="pfprules" @change="addPicture" accept="image/png, image/jpeg"
+                            label="Image" prepend-icon="mdi-camera">
+                        </v-file-input>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col v-if="user.pictures && user.pictures.length">
+                        <v-carousel class="rounded-lg" show-arrows="hover">
+                            <v-carousel-item v-for="picture in user.pictures" :key="picture.id">
+                                <v-card v-if="picture.image_data">
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn icon @click="deletePicture(picture)">
+                                            <v-icon class="text-red">mdi-delete</v-icon>
+                                        </v-btn>
+                                    </v-card-actions>
+                                    <v-card-item>
+                                        <v-img cover class="rounded-lg" :src=picture.image_data></v-img>
+                                    </v-card-item>
+                                </v-card>
+                            </v-carousel-item>
+                        </v-carousel>
+                    </v-col>
+                    <v-col v-else>
+                        <p>Aucune image</p>
+                    </v-col>
+                </v-row>
             </v-container>
         </v-card>
     </v-form>
@@ -78,10 +125,8 @@ import { computed } from 'vue';
 import { ApiClient } from '@/clients/apiClient.js';
 import { watch } from 'vue';
 import router from '@/router';
-// import ImageUploader from '@/components/ImageUploader.vue';
 
 const user = ref({});
-const pfp = ref({});
 
 const imagePreview = ref(null);
 const selectedFile = ref(null);
@@ -119,6 +164,9 @@ const handleSubmit = async () => {
     if (selectedFile.value) {
         const formdata = new FormData();
         formdata.append('image', selectedFile.value);
+        if (user.value.pfp) {
+            await ApiClient.deletePicture(user.value.pfp);
+        }
         user.value.pfp = await ApiClient.addPicture(formdata);
     }
 
@@ -136,14 +184,43 @@ const previewImage = async (event) => {
     }
 }
 
+const addPicture = async (event) => {
+    const selectimage = event.target.files[0];
+    if (selectimage) {
+        const formdata = new FormData();
+        formdata.append('image', selectimage);
+
+        const response = await ApiClient.addPicture(formdata);
+        if (response) {
+            const fetchedpicture = await ApiClient.getPicture(response);
+            user.value.pictures.push(JSON.parse('{"id": ' + response + ',"image_data": "' + fetchedpicture + '"}'));
+
+        }
+    }
+}
+
+const deletePicture = async (picture) => {
+    await ApiClient.deletePicture(picture.id);
+    const index = user.value.pictures.indexOf(picture);
+    user.value.pictures.splice(index, 1);
+};
+
 const fetchUser = async () => {
     const fetchedUser = await ApiClient.getUser();
     const fetchedTags = await ApiClient.getUserTags(fetchedUser.id);
     if (fetchedUser.pfp) {
         const fetchedUserPfp = await ApiClient.getPicture(fetchedUser.pfp);
         if (fetchedUserPfp) {
-            pfp.value = fetchedUserPfp;
+            user.value.pfp_src = fetchedUserPfp;
         }
+    }
+
+    const fetchedPictures = await ApiClient.getPictures();
+
+    if (fetchedPictures) {
+        user.value.pictures = fetchedPictures;
+    }else{
+        user.value.pictures = [];
     }
 
     user.value.id = fetchedUser.id;
@@ -176,6 +253,10 @@ watch(search, () => {
     }
 });
 
+
+const lookingForImage = computed(() => {
+  return user.value.looking_for ? '/giga_chad.jpg' : '/giga_female.jpg';
+});
 
 const filteredTags = () => {
     const all_tags_ids = all_tags.map((tag) => tag.id);

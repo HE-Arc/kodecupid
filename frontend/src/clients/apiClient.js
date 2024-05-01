@@ -69,7 +69,7 @@ export class ApiClient {
     } catch (error) {
       console.error(error.response?.data);
       setError(error.response?.data, 'error');
-      return error;
+      return false;
     }
   }
 
@@ -188,6 +188,17 @@ export class ApiClient {
 
   // images
 
+  static async getPictures() {
+    try {
+      const response = await axios.get(handleRoute(RouteEnum.PICTURE_LIST));
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data);
+      setError(error.response?.data, 'error');
+      return false;
+    }
+  }
+
   static async getPicture(id) {
     const arrayBufferToBase64 = buffer =>
         btoa(String.fromCharCode(...new Uint8Array(buffer)));
@@ -213,7 +224,6 @@ export class ApiClient {
             withCredentials: true
           });
 
-      console.log(response.data);
       return response.data.id;
     } catch (error) {
       console.error(error.response?.data);
@@ -221,19 +231,16 @@ export class ApiClient {
       return false;
     }
   }
-  static async addProfilePicture(image) {
-    try {
-      console.log('addProfilePicture', image);
-      const response = await axios.post(
-          handleRoute(RouteEnum.USER_ADD_PICTURE), image,
-          {headers: {'Content-Type': 'json'}, withCredentials: true});
 
-      console.log(response.data);
-      return response.data;
+  static async deletePicture(id) {
+    try {
+      const response = await axios.delete(handleRoute(RouteEnum.PICTURE_DETAIL, id));
+      setError(response.data, 'success');
+      return true;
     } catch (error) {
       console.error(error.response?.data);
       setError(error.response?.data, 'error');
-      return error;
+      return false;
     }
   }
 }
