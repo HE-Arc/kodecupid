@@ -1,6 +1,6 @@
 <template slot="user">
     <v-card class="rounded-xl">
-        <v-card-item>
+        <v-card-item v-if=details>
             <v-container>
                 <v-row>
                     <v-col cols="4">
@@ -60,14 +60,37 @@
 
             </v-container>
         </v-card-item>
+        <v-card-item v-if=!details>
+            <v-container>
+                <v-row>
+                    <v-col cols="4">
+                        <v-img cover class="rounded-circle border border-secondary border-lg" width="200" height="200"
+                            :src=user.pfp_src>
+                        </v-img>
+                    </v-col>
+
+                    <v-col class="align-center d-flex">
+                        <v-row>
+                            <v-col>
+                                <v-card-title>{{ user.username }}</v-card-title>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-card-item>
     </v-card>
 </template>
 
 <script setup>
 
-const { user, pfp } = defineProps({
+const { user, details } = defineProps({
     user: {
         type: Object,
+        required: true
+    },
+    details: {
+        type: Boolean,
         required: true
     }
 });

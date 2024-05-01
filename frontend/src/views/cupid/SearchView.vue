@@ -2,7 +2,7 @@
     <v-container v-if="userx">
         <v-row justify="center">
             <v-col>
-                <PeopleCard :user=user />
+                <PeopleCard :user=user :details=true />
             </v-col>
         </v-row>
         <v-row>

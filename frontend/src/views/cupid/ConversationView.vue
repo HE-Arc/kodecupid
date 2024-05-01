@@ -7,7 +7,7 @@
             <p> {{ user_target.username }}</p>
         </v-banner>
         <v-row class="mb-4">
-            <v-container class="mx-4">
+            <v-container ref="scrollContainer" class="mx-4 scrollable-container">
                 <v-row v-if="conversation.length > 0" v-for="message in conversation">
                     <v-col class="d-flex flex-row-reverse" v-if="message.source_user == user.id">
                         <v-card class="w-75 bg-blue" elevation="4">
@@ -33,8 +33,21 @@
     </v-container>
 </template>
 
+<style scoped>
+    .scrollable-container {
+    max-height: 60vh; /* Adjust the height as needed */
+    overflow-y: auto; /* Enables vertical scrolling */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    }
+
+    .scrollable-container::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+    }
+</style>
+
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, nextTick } from 'vue';
 import { ApiClient } from '@/clients/apiClient.js';
 
 import router from '@/router';
@@ -45,14 +58,26 @@ const user = ref({});
 
 const message = ref('');
 
+const lastConversationLength = ref(0)
 
 onMounted(() => {
-    fetchConversation();
+    fetchConversation().then(() => {
+        scrollToBottom();
+    });
 
     setInterval(() => {
         fetchConversation();
     }, 5000);
 });
+
+function scrollToBottom() {
+    nextTick(() => {
+        const scrollElement = document.querySelector('.scrollable-container');
+        if (!scrollElement) return;
+        console.log("ta soeur la pute");
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+    });
+}
 
 const sendMessage = async () => {
 
@@ -97,7 +122,14 @@ const fetchConversation = async () => {
                 const date = new Date(message.sent);
                 message.sent = date.toLocaleString();
             });
+
             conversation.value = fetchedConversation;
+            if (fetchedConversation.length > lastConversationLength.value) {
+                console.log("ta soeur en enfer putain");
+                scrollToBottom();
+            }
+            
+            lastConversationLength.value = fetchedConversation.length;
         }
     }
 };
