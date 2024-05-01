@@ -75,7 +75,7 @@ const fetchUser = async () => {
         }
     }
 
-    const fetchedPictures = await ApiClient.getPictures();
+    const fetchedPictures = await ApiClient.getPicturesByUser(fetchedUser.id);
 
     if (fetchedPictures) {
         user.value.pictures = fetchedPictures;

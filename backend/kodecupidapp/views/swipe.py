@@ -2,18 +2,12 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
-
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-
 from rest_framework.viewsets import GenericViewSet
 
 from ..serializers import UserSerializer
-
 from ..models import User, Like
 
 import random
-
-
 
 class SwipeView(GenericViewSet):
     permission_classes = [IsAuthenticated]
@@ -46,9 +40,6 @@ class SwipeView(GenericViewSet):
     def random_user(self,request):
         users = User.objects.exclude(id=request.user.id)
         cu_user = request.user
-
-
-
         likes_source_user = Like.objects.filter(source_user=request.user).values_list('target_user', flat=True)
         # exclude users that do not have the sex of the user that is looking for
         users = users.exclude(sex=not cu_user.looking_for)

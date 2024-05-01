@@ -210,6 +210,18 @@ export class ApiClient {
     }
   }
 
+  static async getPicturesByUser(id) {
+    try {
+      const response =
+          await axios.get(handleRoute(RouteEnum.USER_PICTURES_LIST, id));
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data);
+      setError(error.response?.data, 'error');
+      return false;
+    }
+  }
+
   static async getPicture(id) {
     const arrayBufferToBase64 = buffer =>
         btoa(String.fromCharCode(...new Uint8Array(buffer)));

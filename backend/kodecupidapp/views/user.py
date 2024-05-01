@@ -1,17 +1,18 @@
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import  CreateModelMixin, RetrieveModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from django.shortcuts import get_object_or_404
 
-from ..models import User, Tag
-from ..serializers import UserSerializer, UserRegistrationSerializer, UserConfigurationSerializer, TagSerializer
+from ..models import User, Tag, Picture
+from ..serializers import UserSerializer, UserRegistrationSerializer, UserConfigurationSerializer, TagSerializer, PictureSerializer
 
 from rest_framework.decorators import action
 
 import os
+
 
 class UserView(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
     queryset = User.objects.all()
@@ -23,7 +24,7 @@ class UserView(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
             return UserConfigurationSerializer
         else:
             return UserSerializer
-    
+
     def get_permissions(self):
         if self.action == "create":
             return [AllowAny()]
@@ -37,29 +38,28 @@ class UserView(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
             serializer.save()
             return Response({"message": "User created successfully."}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def partial_update(self, request, pk=None):
         user = request.user
         serializer = self.get_serializer_class()(user, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "User configured successfully."}, status=status.HTTP_204_NO_CONTENT)   
+            return Response({"message": "User configured successfully."}, status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
     @action(detail=False, methods=['get'])
     def current(self, request):
         user = request.user
         serializer = self.get_serializer_class()(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @action(detail=True, methods=['get'])
     def tags(self, request, pk=None):
         user = self.get_object()
         serializer = TagSerializer(user.tags, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=False, methods=['post'])
     def add_tag(self, request):
         serializer = TagSerializer(data=request.data)
@@ -97,12 +97,12 @@ class UserView(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
         user.tags.remove(tag)
 
         return Response({'message': 'Tag removed from user'}, status=status.HTTP_204_NO_CONTENT)
-    
+
     @action(detail=False, methods=['post'])
     def add_picture(self, request):
         user = request.user
 
-        #if user.pfp delete the previous pfp
+        # if user.pfp delete the previous pfp
         if user.pfp:
             user.pfp.delete()
             os.remove(user.pfp.path)
@@ -110,3 +110,12 @@ class UserView(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
         user.pfp = request.data['pfp']
         user.save()
         return Response({"message": "Picture added successfully."}, status=status.HTTP_201_CREATED)
+
+    # action to retrieve all the pictures of a user
+    @action(detail=True, methods=['get'])
+    def pictures(self, request, pk=None):
+        user = self.get_object()
+        queryset = Picture.objects.filter(user=user.id).exclude(id=user.pfp.id)
+        serializer = PictureSerializer(queryset, many=True)
+
+        return Response(serializer.data)
