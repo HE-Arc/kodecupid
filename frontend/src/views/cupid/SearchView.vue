@@ -84,7 +84,7 @@ const fetchUser = async () => {
     user.value.id = fetchedUser.id;
     user.value.username = fetchedUser.username;
     user.value.bio = fetchedUser.bio;
-    user.value.looking_for = fetchedUser.looking_for;
+    user.value.sex = fetchedUser.sex;
     user.value.pfp = fetchedUser.pfp;
     user.value.tags = fetchedTags;
 }

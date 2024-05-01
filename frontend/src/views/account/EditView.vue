@@ -95,7 +95,7 @@
                 <v-row>
                     <v-col>
                         <v-label>Images:</v-label>
-                        <v-file-input :rules="pfprules" @change="addPicture" accept="image/png, image/jpeg"
+                        <v-file-input @change="addPicture" accept="image/png, image/jpeg"
                             label="Image" prepend-icon="mdi-camera">
                         </v-file-input>
                     </v-col>
