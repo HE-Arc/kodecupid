@@ -1,8 +1,8 @@
 <template>
     <v-container>
         <v-row v-if="match.length > 0" class="d-flex flex-row">
-            <v-col :cols="match.length%2 ? 12 : 6" v-for="user in match">
-                <PeopleCard :user=user />
+            <v-col :cols="12 / Math.sqrt(match.length)" v-for="user in match">
+                <PeopleCard @click="showConversation(user.id)" :user=user />
             </v-col>
         </v-row>
         <v-row v-else>
@@ -19,9 +19,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref} from 'vue';
 import { ApiClient } from '@/clients/apiClient.js';
 import PeopleCard from '@/components/PeopleCard.vue';
+
+import router from '@/router';
 
 const match = ref([]);
 
@@ -52,5 +54,10 @@ const fetchUserMatch = async () => {
 onMounted(() => {
     fetchUserMatch();
 });
+
+
+const showConversation = (id) => {
+    router.push({ name: 'conversation', params: { id: id } , replace: true, force: true });
+}
 
 </script>

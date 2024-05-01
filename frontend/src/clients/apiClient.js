@@ -96,6 +96,17 @@ export class ApiClient {
     }
   };
 
+  static async getUserById(id) {
+    try {
+      const response = await axios.get(handleRoute(RouteEnum.USER_DETAIL, id));
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data);
+      setError(error.response?.data, 'error');
+      return error;
+    }
+  };
+
   static async getUserTags(id) {
     try {
       const response =
@@ -234,8 +245,34 @@ export class ApiClient {
 
   static async deletePicture(id) {
     try {
-      const response = await axios.delete(handleRoute(RouteEnum.PICTURE_DETAIL, id));
+      const response =
+          await axios.delete(handleRoute(RouteEnum.PICTURE_DETAIL, id));
       setError(response.data, 'success');
+      return true;
+    } catch (error) {
+      console.error(error.response?.data);
+      setError(error.response?.data, 'error');
+      return false;
+    }
+  }
+
+  // conversations
+  static async getConversation(id) {
+    try {
+      const response =
+          await axios.get(handleRoute(RouteEnum.MESSAGE_CONVERSATION, id));
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data);
+      setError(error.response?.data, 'error');
+      return false;
+    }
+  }
+
+  static async addMessage(message) {
+    try {
+      await axios.post(
+          handleRoute(RouteEnum.MESSAGE_LIST), message, {withCredentials: true});
       return true;
     } catch (error) {
       console.error(error.response?.data);
@@ -246,6 +283,8 @@ export class ApiClient {
 }
 
 
+
+// utils
 
 const handleRoute = (function() {
   function handleRoute(routeName, id) {

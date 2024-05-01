@@ -48,7 +48,6 @@ const user = ref({});
 const userx = ref(false);
 
 const like = async () => {
-    console.log(user.value);
     const liked = await ApiClient.likeUser(user.value.id);
     if (liked) {
         fetchUser();

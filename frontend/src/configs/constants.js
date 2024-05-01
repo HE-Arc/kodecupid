@@ -55,6 +55,10 @@ const routes_api = {
     'swipe-user-by-id':'/api/swipes/{id}/',
     'swipe-matches':'/api/swipes/matches/',
 
+    'message-list':'/api/messages/',
+    'message-conversation':'/api/messages/?target_user={id}',
+
+
     'token_obtain_pair':'/api/token/',
     'token_refresh':'/api/token/refresh/',
 
@@ -81,6 +85,9 @@ const RouteEnum = {
     SWIPE_RANDOM_USER: 'swipe-random-user',
     SWIPE_USER_BY_ID: 'swipe-user-by-id',
     SWIPE_MATCHES: 'swipe-matches',
+
+    MESSAGE_LIST: 'message-list',
+    MESSAGE_CONVERSATION: 'message-conversation',
 
     TOKEN_OBTAIN_PAIR: 'token_obtain_pair',
     TOKEN_REFRESH: 'token_refresh',
