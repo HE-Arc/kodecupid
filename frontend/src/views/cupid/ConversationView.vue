@@ -48,6 +48,11 @@ const message = ref('');
 
 onMounted(() => {
     fetchConversation();
+
+    setInterval(() => {
+        fetchConversation();
+        window.scrollTo(0, document.body.scrollHeight);
+    }, 5000);
 });
 
 
