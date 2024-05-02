@@ -89,6 +89,10 @@ const scrollToBottom = () => {
 }
 
 const sendMessage = async () => {
+
+    if(message.value.length == 0)
+        return;
+
     const target_user = router.currentRoute.value.params.id;
     if (target_user) {
 

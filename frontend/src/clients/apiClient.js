@@ -57,7 +57,6 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
       return false;
     }
   }
@@ -295,7 +294,6 @@ export class ApiClient {
       return true;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
       return false;
     }
   }
