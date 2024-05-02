@@ -13,10 +13,10 @@
                                     </v-row>
                                 </template>
                             </v-img>
+                            <!-- File Input overlayed transparently over the image -->
                             <v-file-input class="file-input-overlay" @change="previewImage"
                                 @click:clear="imagePreview = null" accept="image/png, image/jpeg" label="Change Avatar"
-                                prepend-icon="mdi-camera"
-                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;">
+                                prepend-icon="mdi-camera" outlined dense hide-details>
                             </v-file-input>
                         </div>
                     </v-col>
@@ -123,6 +123,26 @@
     </v-form>
 </template>
 
+<style>
+    .image-upload-container {
+        position: relative;
+        cursor: pointer; /* Optional: Changes the cursor on hover over the image to indicate it's clickable */
+        width: 100%;
+    }
+
+    .file-input-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform:translate(-3rem, 0);
+        width: 280px;
+        height: 335px;
+        opacity: 0; /* Make the input invisible */
+        cursor: pointer;
+        z-index: 2;
+    }
+</style>
+
 <script setup>
 import { ref } from 'vue';
 import { onMounted } from 'vue';
@@ -177,7 +197,7 @@ const handleSubmit = async () => {
     const userCopy = JSON.parse(JSON.stringify(user.value));
     delete userCopy.pictures;
     delete userCopy.pfp_src;
-    
+
     const response = await ApiClient.updateUser(JSON.stringify(userCopy), user.value.id);
 
     if (response) {
