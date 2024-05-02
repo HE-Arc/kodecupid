@@ -1,49 +1,59 @@
 <template>
-    <v-container>
-        <v-banner sticky class="d-inline-flex align-center mb-4" style="z-index: 1;">
-            <v-img cover class="rounded-circle border border-secondary border-lg mr-2" width="50" height="50"
-                :src=user_target.pfp_src>
-            </v-img>
-            <p> {{ user_target.username }}</p>
-        </v-banner>
+    <v-container fullscreen>
+        <v-row>
+            <v-col class="d-flex align-center">
+                <v-img :src="user_target.pfp_src" :aspect-ratio="1" min-width="50" max-width="100"
+                    class="rounded-circle border border-secondary border-lg mr-4 flex-grow-1">
+                </v-img>
+                <p>{{ user_target.username }}</p>
+            </v-col>
+        </v-row>
+
+        <v-divider class="my-4"></v-divider>
+
         <v-row class="mb-4">
             <v-container ref="scrollContainer" class="mx-4 scrollable-container">
-                <v-row v-if="conversation.length > 0" v-for="message in conversation">
-                    <v-col class="d-flex flex-row-reverse" v-if="message.source_user == user.id">
-                        <v-card class="w-75 bg-blue" elevation="4">
-                            <v-card-text>{{ message.content }}</v-card-text>
-                            <v-card-text class="text-right">{{ message.sent }}</v-card-text>
-                        </v-card>
-                    </v-col>
-                    <v-col class="d-flex flex-row" v-else>
-                        <v-card class="w-75 bg-blue-lighten-5" elevation="4">
-                            <v-card-text>{{ message.content }}</v-card-text>
-                            <v-card-text class="text-right">{{ message.sent }}</v-card-text>
-                        </v-card>
-                    </v-col>
-                </v-row>
+                <template v-if="conversation.length > 0">
+                    <v-row v-for="message in conversation" :key="message.id">
+                        <v-col
+                            :class="{ 'd-flex flex-row-reverse': message.source_user === user.id, 'd-flex flex-row': message.source_user !== user.id }">
+                            <v-card
+                                :class="{ 'bg-blue': message.source_user === user.id, 'bg-blue-lighten-5': message.source_user !== user.id }"
+                                elevation="4" class="flex-grow-1" max-width="65%">
+                                <v-card-text>{{ message.content }}</v-card-text>
+                                <v-card-text class="text-right">{{ message.sent }}</v-card-text>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </template>
             </v-container>
         </v-row>
+
         <v-row>
-            <v-form @submit.prevent="sendMessage" @keyup.native.enter class="d-inline-flex w-100 align-center">
-                <v-text-field variant="solo" class="mr-2 flex-grow-1" v-model="message" label="Message" type="text" />
-                <v-btn type="submit" class="bg-primary ">Envoyer</v-btn>
+            <v-form @submit.prevent="sendMessage" @keyup.native.enter class="d-inline-flex w-100">
+                <v-text-field variant="solo" class="mr-2 flex-grow-1" v-model="message" label="Message" type="text"
+                    append-inner-icon="mdi-send" @click:append-inner="sendMessage"/>
             </v-form>
         </v-row>
     </v-container>
 </template>
 
 <style scoped>
-    .scrollable-container {
-    max-height: 60vh; /* Adjust the height as needed */
-    overflow-y: auto; /* Enables vertical scrolling */
-    scrollbar-width: none; /* For Firefox */
-    -ms-overflow-style: none; /* For Internet Explorer and Edge */
-    }
+.scrollable-container {
+    max-height: calc(100vh - 350px);
+    /* Adjust the height as needed */
+    overflow-y: auto;
+    /* Enables vertical scrolling */
+    scrollbar-width: none;
+    /* For Firefox */
+    -ms-overflow-style: none;
+    /* For Internet Explorer and Edge */
+}
 
-    .scrollable-container::-webkit-scrollbar {
-    display: none; /* For Chrome, Safari, and Opera */
-    }
+.scrollable-container::-webkit-scrollbar {
+    display: none;
+    /* For Chrome, Safari, and Opera */
+}
 </style>
 
 <script setup>
@@ -70,7 +80,7 @@ onMounted(() => {
     }, 5000);
 });
 
-function scrollToBottom() {
+const scrollToBottom = () => {
     nextTick(() => {
         const scrollElement = document.querySelector('.scrollable-container');
         if (!scrollElement) return;
@@ -79,7 +89,6 @@ function scrollToBottom() {
 }
 
 const sendMessage = async () => {
-
     const target_user = router.currentRoute.value.params.id;
     if (target_user) {
 
@@ -126,7 +135,7 @@ const fetchConversation = async () => {
             if (fetchedConversation.length > lastConversationLength.value) {
                 scrollToBottom();
             }
-            
+
             lastConversationLength.value = fetchedConversation.length;
         }
     }

@@ -1,8 +1,8 @@
 <template>
-  <v-app>
+  <v-app >
     <v-container>
       <v-row justify="center">
-        <v-col cols="12" sm="10" md="9" lg="6" xl="6">
+        <v-col cols="12" xs="12" sm="10" md="9" lg="7" xl="6">
           <header class="mb-6">
             <ErrorAlert/>
           </header>

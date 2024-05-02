@@ -30,14 +30,14 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          'like': '#2cc72c',
-          'dislike': '#902727',
+          'like': '#2cc72ca2',
+          'dislike': '#902727ad',
         },
       },
       dark: {
         colors: {
-          'like': '#2cc72c',
-          'dislike': '#902727',
+          'like': '#2cc72c5d',
+          'dislike': '#9027275d',
         },
       },
     },

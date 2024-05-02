@@ -3,10 +3,8 @@
         <v-card-item v-if=details>
             <v-container>
                 <v-row>
-                    <v-col class="flex-grow-0 mr-4">
-                        <v-img cover class="rounded-circle border border-secondary border-lg" width="200" height="200"
-                            :src=user.pfp_src>
-                        </v-img>
+                    <v-col class="mr-4">
+                        <v-img class="rounded-circle border border-secondary border-lg" :src="user.pfp_src" :aspect-ratio="1" min-width="50" max-width="200"></v-img>
                     </v-col>
 
                     <v-col class="align-center d-flex">
@@ -60,7 +58,7 @@
 
             </v-container>
         </v-card-item>
-        <v-card-item v-if=!details>
+        <v-card-item v-else>
             <v-container>
                 <v-row>
                     <v-col cols="flex-grow-0 mr-4">

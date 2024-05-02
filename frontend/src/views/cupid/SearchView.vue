@@ -1,16 +1,10 @@
 <template>
     <v-container v-if="userx">
         <v-row justify="center">
-            <v-col>
-                <PeopleCard :user=user :details=true />
-            </v-col>
-        </v-row>
-        <v-row>
-            <v-col>
-                <v-container class="d-flex justify-space-between">
-                    <v-btn @click="like" class="bg-like"><v-icon>mdi-thumb-up</v-icon></v-btn>
-                    <v-btn @click="dislike" class="bg-dislike"><v-icon>mdi-thumb-down</v-icon></v-btn>
-                </v-container>
+            <v-col class="d-inline-flex align-center">
+                <v-btn @click="like" class="h-100 mr-2 bg-like"><v-icon>mdi-thumb-up</v-icon></v-btn>
+                <PeopleCard elevation="4" class="flex-grow-1" :user=user :details=true />
+                <v-btn @click="dislike" class="h-100 ml-2 bg-dislike"><v-icon>mdi-thumb-down</v-icon></v-btn>
             </v-col>
         </v-row>
     </v-container>

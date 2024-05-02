@@ -75,7 +75,10 @@ export class ApiClient {
 
   static async likeUser(id) {
     try {
-      await axios.post(handleRoute(RouteEnum.LIKE_LIST), {target_user_id: id});
+      const reponse =await axios.post(handleRoute(RouteEnum.LIKE_LIST), {target_user_id: id});
+      if (reponse.status === 201 && reponse.data?.match) {
+          setError({message: 'Vous avez un match !!!'}, 'success');
+      }
       return true;
     } catch (error) {
       console.error(error.response?.data);
