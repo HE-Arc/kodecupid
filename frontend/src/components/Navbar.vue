@@ -2,34 +2,34 @@
     <v-bottom-navigation v-model="value" :bg-color="color()" mode="shift" grow>
 
         <v-btn :to="{ name: 'search' }">
-            <v-icon aria-hidden="false">
+            <v-icon aria-hidden="false" size="x-large">
                 mdi-magnify
             </v-icon>
             <span>Recherche</span>
         </v-btn>
 
         <v-btn :to="{ name: 'match' }">
-            <v-icon aria-hidden="false">
+            <v-icon aria-hidden="false" size="x-large">
                 mdi-robot-love
             </v-icon>
             <span>Matchs</span>
         </v-btn>
 
         <v-btn :to="{ name: 'account-show' }">
-            <v-icon aria-hidden="false">
+            <v-icon aria-hidden="false" size="x-large">
                 mdi-account
             </v-icon>
             <span>Ton compte</span>
         </v-btn>
         
         <v-btn @click="logout()" v-if="checkAuth()">
-            <v-icon aria-hidden="false">
+            <v-icon aria-hidden="false" size="x-large">
                 mdi-logout
             </v-icon>
             <span>Déconnexion</span>
         </v-btn>
         <v-btn v-else :to="{ name: 'signin' }">
-            <v-icon aria-hidden="false">
+            <v-icon aria-hidden="false" size="x-large">
                 mdi-login
             </v-icon>
             <span>Connexion</span>
