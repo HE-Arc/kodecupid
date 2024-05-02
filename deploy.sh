@@ -15,20 +15,15 @@ git pull origin main
 
 cd backend
 
-rm -f Pipfile.lock
-rm -f requirement.txt
-rm -rf static/*
+sudo rm -f Pipfile.lock
+sudo rm -rf static/*
 
-sudo pipenv install --deploy
-sudo pipenv run python3 manage.py migrate
+pip install -r requirements.txt
 
-sudo pipenv run python3 manage.py import_tags
-
-sudo pipenv run python3 manage.py spectacular --file schema.yml
-sudo pipenv run python3 manage.py collectstatic --noinput
-
-sudo pipenv run pip freeze > requirement.txt
-pip install -r requirement.txt
+python manage.py migrate
+python manage.py import_tags
+python manage.py spectacular --file schema.yml
+python manage.py collectstatic --noinput
 
 cd "$root"
 cd frontend
