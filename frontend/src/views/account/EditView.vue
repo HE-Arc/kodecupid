@@ -4,9 +4,9 @@
             <v-container>
                 <v-row>
                     <v-col>
-                        <div class="image-upload-container" style="position: relative; width: 200px; height: 200px;">
-                            <v-img cover class="rounded-circle border border-secondary border-lg mr-3" width="200"
-                                height="200" :src="imagePreview || user.pfp_src">
+                        <div class="image-upload-container">
+                            <v-img class="rounded-circle border border-secondary border-lg mr-3" :aspect-ratio="1"
+                                min-width="50" max-width="200" :src="imagePreview || user.pfp_src">
                                 <template v-slot:placeholder>
                                     <v-row class="fill-height ma-0" align="center" justify="center">
                                         <v-icon color="grey lighten-1" size="56">mdi-account-circle</v-icon>
@@ -108,7 +108,8 @@
                     <v-col v-if="user.pictures && user.pictures.length">
                         <v-carousel class="rounded-lg" show-arrows="hover">
                             <v-carousel-item v-for="picture in user.pictures" :key="picture.id" :src=picture.image_data>
-                                <v-btn class="text-red" icon="mdi-delete" variant="text" @click="deletePicture(picture)">
+                                <v-btn class="text-red" icon="mdi-delete" variant="text"
+                                    @click="deletePicture(picture)">
                                 </v-btn>
                             </v-carousel-item>
                         </v-carousel>

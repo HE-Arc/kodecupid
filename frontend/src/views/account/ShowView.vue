@@ -3,9 +3,7 @@
         <v-container>
             <v-row>
                 <v-col>
-                    <v-img cover class="rounded-circle border border-secondary border-lg" width="100" height="100"
-                        :src=user.pfp_src>
-                    </v-img>
+                    <v-img class="rounded-circle border border-secondary border-lg" :src="user.pfp_src" :aspect-ratio="1" min-width="50" max-width="200"></v-img>
                 </v-col>
 
                 <v-col>
