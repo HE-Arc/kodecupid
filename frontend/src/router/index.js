@@ -21,6 +21,12 @@ const router = createRouter({
       meta: { requiresAuth: true } 
     },
     {
+      path: '/match/:id',
+      name: 'conversation',
+      component: () => import('@/views/cupid/ConversationView.vue'),
+      meta: { requiresAuth: true } 
+    },
+    {
       path: '/authentication',
       name: 'authentication',
       component: () => import('@/views/authentication/AuthenticationView.vue'),
@@ -38,7 +44,7 @@ const router = createRouter({
         { path: '', name: 'account-show', component: () => import('@/views/account/ShowView.vue') },
         { path: 'edit',name: 'account-edit', component: () => import('@/views/account/EditView.vue') }
       ]
-    }
+    },
   ],
 })
 

@@ -19,6 +19,34 @@
         </v-col>
       </v-row>
 
+      <!-- Radio buttons for sex -->
+      <v-row>
+        <v-col cols="6">
+            <v-label>Sexe</v-label>
+            <v-radio-group v-model="form.sex" row>
+                <v-radio label="Homme" :value=true></v-radio>
+                <v-radio label="Femme" :value=false></v-radio>
+            </v-radio-group>
+        </v-col>
+        <v-col cols="6" class="d-flex justify-center align-center">
+            <v-img :src="sexImage" height="100px" class="rounded-circle shadow" />
+        </v-col>
+      </v-row>
+
+      <!-- Radio buttons for looking_for -->
+      <v-row>
+        <v-col cols="6">
+          <v-label>Recherche</v-label>
+          <v-radio-group v-model="form.looking_for" row>
+            <v-radio label="Homme" :value=true></v-radio>
+            <v-radio label="Femme" :value=false></v-radio>
+          </v-radio-group>
+        </v-col>
+        <v-col cols="6" class="d-flex justify-center align-center">
+            <v-img :src="lookingForImage" height="100px" class="rounded-circle shadow" />
+        </v-col>
+      </v-row>
+
       <v-row>
         <v-col>
           <v-btn type="submit" color="primary" form="signup-form">S'inscrire</v-btn>
@@ -33,15 +61,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { store } from '@/store';
-import { setError } from '@/store';
-import axios from 'axios';
+import { ref, computed } from 'vue';
+import {ApiClient} from '@/clients/apiClient.js';
 import router from '@/router';
 
 const form = ref({
   username: '',
-  password: ''
+  password: '',
+  sex: true,
+  looking_for: false
 });
 
 const usernameRules = [
@@ -53,27 +81,23 @@ const passwordRules = [
   v => v.length >= 6 || 'Le mot de passe doit contenir min. 6 caractères'
 ];
 
+const sexImage = computed(() => {
+  return form.value.sex ? '/giga_chad.jpg' : '/giga_female.jpg';
+});
+
+const lookingForImage = computed(() => {
+  return form.value.looking_for ? '/giga_chad.jpg' : '/giga_female.jpg';
+});
+
 
 const handleSubmit = async () => {
   const jsonForm = JSON.stringify(form.value);
-  axios.post(store.routes['USER_SIGNUP'], jsonForm, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': "anonymous"
-    }}
-    , {  })
-    .catch((error) => {
-      console.error(error.response.data);
-      setError(error.response.data,'error');
-      return error
-    })
-    .then(response => {
-      console.log(response);
-      if (response.status === 201) {
-        localStorage.setItem('uninitialized', true);
-        setError({message: "Votre compte a été bien enregistre"},'success');
-        router.push({ name: 'signin', replace: true, force: true});
-      }
-    });
+
+  const response = await ApiClient.signupUser(jsonForm);
+
+  if (response){
+    router.push({name: 'signin', replace: true, force: true});
+  }
+  
 };
 </script>

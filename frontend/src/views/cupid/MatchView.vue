@@ -1,8 +1,8 @@
 <template>
     <v-container>
-        <v-row v-if="match.length > 0" class="d-flex flex-row">
-            <v-col cols="6" v-for="user in match">
-                <PeopleCard :user=user />
+        <v-row v-if="match.length > 0">
+            <v-col v-for="user in match">
+                <PeopleCard @click="showConversation(user.id)" :user=user min-width="250"/>
             </v-col>
         </v-row>
         <v-row v-else>
@@ -19,29 +19,45 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref} from 'vue';
+import { ApiClient } from '@/clients/apiClient.js';
 import PeopleCard from '@/components/PeopleCard.vue';
 
-import { store } from '@/store';
-import { setError } from '@/store';
-import axios from 'axios';
+import router from '@/router';
 
 const match = ref([]);
 
 const fetchUserMatch = async () => {
-    // TODO not implemented yet -> will be done in the future
-    // axios.get(store.routes['USER_MATCH'], {}).catch((error) => {
-    //     console.error(error.response.data);
-    //     store.error.value = error.response.data;
-    //     return error
-    // })
-    //     .then(response => {
-    //         match.value = response.data;
-    //     });
+    match.value = await ApiClient.getUserMatches();
+
+    if (!match.value) {
+        return;
+    }
+
+    match.value.forEach(async (user) => {
+
+        if (user.pfp) {
+            const fetchedUserPfp = await ApiClient.getPicture(user.pfp);
+            if (fetchedUserPfp) {
+                user.pfp_src = fetchedUserPfp;
+            }
+        }
+
+        const fetchedTags = ApiClient.getUserTags(user.id);
+        if (fetchedTags) {
+            user.tags = fetchedTags;
+        }
+
+    });
 };
 
 onMounted(() => {
     fetchUserMatch();
 });
+
+
+const showConversation = (id) => {
+    router.push({ name: 'conversation', params: { id: id } , replace: true, force: true });
+}
 
 </script>

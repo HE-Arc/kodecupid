@@ -12,9 +12,6 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi';
 
 import axiosPluging from '@/plugins/axiosPlugin';
 
-// import axios from 'axios';
-// axios.defaults.baseURL = import.meta.env.VITE_API_URL;
-
 const app = createApp(App);
 
 const vuetify = createVuetify({
@@ -33,14 +30,14 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          'like': '#2cc72c',
-          'dislike': '#902727',
+          'like': '#2cc72ca2',
+          'dislike': '#902727ad',
         },
       },
       dark: {
         colors: {
-          'like': '#2cc72c',
-          'dislike': '#902727',
+          'like': '#2cc72c5d',
+          'dislike': '#9027275d',
         },
       },
     },

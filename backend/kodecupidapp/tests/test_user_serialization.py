@@ -14,13 +14,17 @@ class UserRegistrationSerializerTestCase(TestCase):
         """
         valid_serializer_data = {
             'username': 'testuser',
-            'password': 'testpassword123'
+            'password': 'testpassword123',
+            'sex': True,
+            'looking_for': False
         }
         serializer = UserRegistrationSerializer(data=valid_serializer_data)
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(User.objects.get().username, 'testuser')
+        self.assertEqual(User.objects.get().sex, True)
+        self.assertEqual(User.objects.get().looking_for, False)
         self.assertTrue(user.check_password(valid_serializer_data['password']))
         
     def test_serializer_with_invalid_data(self):
