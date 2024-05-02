@@ -16,7 +16,7 @@
                             <!-- File Input overlayed transparently over the image -->
                             <v-file-input class="file-input-overlay" @change="previewImage"
                                 @click:clear="imagePreview = null" accept="image/png, image/jpeg" label="Change Avatar"
-                                prepend-icon="mdi-camera" outlined dense hide-details>
+                                prepend-icon="mdi-camera" outlined dense hide-details variant="text">
                             </v-file-input>
                         </div>
                     </v-col>
@@ -126,7 +126,6 @@
 <style>
     .image-upload-container {
         position: relative;
-        cursor: pointer; /* Optional: Changes the cursor on hover over the image to indicate it's clickable */
         width: 100%;
     }
 
@@ -139,7 +138,6 @@
         height: 335px;
         opacity: 0; /* Make the input invisible */
         cursor: pointer;
-        z-index: 2;
     }
 </style>
 
