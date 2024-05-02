@@ -225,8 +225,15 @@ export class ApiClient {
   }
 
   static async getPicture(id) {
-    const arrayBufferToBase64 = buffer =>
-        btoa(String.fromCharCode(...new Uint8Array(buffer)));
+    const arrayBufferToBase64 = buffer => {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+          binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    };
 
     try {
       const response = await axios.get(
@@ -235,7 +242,7 @@ export class ApiClient {
 
       return `data:image/jpeg;base64,${arrayBufferToBase64(response.data)}`;
     } catch (error) {
-      console.error(error.response?.data);
+      console.error(error);
       setError(error.response?.data, 'error');
       return error;
     }
