@@ -163,6 +163,8 @@ const handleSubmit = async () => {
     }
 
     user.value.tags = user.value.tags?.map(tag => tag.id);
+
+    // Pfp
     if (selectedFile.value) {
         const formdata = new FormData();
         formdata.append('image', selectedFile.value);
@@ -172,7 +174,11 @@ const handleSubmit = async () => {
         user.value.pfp = await ApiClient.addPicture(formdata);
     }
 
-    const response = await ApiClient.updateUser(JSON.stringify(user.value), user.value.id);
+    const userCopy = JSON.parse(JSON.stringify(user.value));
+    delete userCopy.pictures;
+    delete userCopy.pfp_src;
+    
+    const response = await ApiClient.updateUser(JSON.stringify(userCopy), user.value.id);
 
     if (response) {
         router.push({ name: 'account-show', replace: true, force: true });
