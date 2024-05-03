@@ -44,6 +44,7 @@ class SwipeView(GenericViewSet):
         # exclude users that do not have the sex of the user that is looking for
         users = users.exclude(sex=not cu_user.looking_for)
         users = users.exclude(id__in=likes_source_user)
+        users = users.exclude(pfp=None)
 
 
         if len(users) == 0:
