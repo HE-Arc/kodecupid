@@ -67,7 +67,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      // setError(error.response?.data, 'error');
       return false;
     }
   }
@@ -81,7 +81,7 @@ export class ApiClient {
       return true;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return false;
     }
   }
@@ -92,7 +92,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return error;
     }
   };
@@ -103,7 +103,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return error;
     }
   };
@@ -115,7 +115,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return error;
     }
   };
@@ -132,7 +132,7 @@ export class ApiClient {
       return true;
     } catch (error) {
       console.error(error);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return false;
     }
   }
@@ -145,7 +145,7 @@ export class ApiClient {
       return true;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return false;
     }
   };
@@ -158,7 +158,7 @@ export class ApiClient {
       return true;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return false;
     }
   };
@@ -171,7 +171,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return error;
     }
   };
@@ -206,7 +206,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return false;
     }
   }
@@ -218,7 +218,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return false;
     }
   }
@@ -242,7 +242,7 @@ export class ApiClient {
       return `data:image/jpeg;base64,${arrayBufferToBase64(response.data)}`;
     } catch (error) {
       console.error(error);
-      setError(error.response?.data, 'error');
+      setError("someting went wrong", 'error');
       return error;
     }
   }
@@ -258,7 +258,7 @@ export class ApiClient {
       return response.data.id;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return false;
     }
   }
@@ -269,7 +269,7 @@ export class ApiClient {
       return true;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return false;
     }
   }
@@ -282,7 +282,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError(error.response?.data, 'error');
+      setError("something went wrong", 'error');
       return false;
     }
   }
