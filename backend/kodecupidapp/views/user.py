@@ -115,7 +115,7 @@ class UserView(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
     @action(detail=True, methods=['get'])
     def pictures(self, request, pk=None):
         user = self.get_object()
-        if (user.pfp):
+        if user.pfp:
             queryset = Picture.objects.filter(user=user.id).exclude(id=user.pfp.id)
             serializer = PictureSerializer(queryset, many=True)
         else:
