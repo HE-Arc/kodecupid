@@ -28,6 +28,8 @@ python manage.py collectstatic --noinput
 cd "$root"
 cd frontend
 
+rm -rf dist/assets
+
 npm install
 npm run build
 

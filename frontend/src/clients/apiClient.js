@@ -19,11 +19,11 @@ export class ApiClient {
 
       if (response.status === 201) {
         localStorage.setItem('uninitialized', true);
-        setError({message: 'Votre compte a été bien enregistre'}, 'success');
+        // setError({message: 'Votre compte a été bien enregistre'}, 'success');
         return true
       }
     } catch (error) {
-      setError(error.response.data, 'error');
+      // setError(error.response.data, 'error');
       return false;
     }
   }
@@ -45,7 +45,7 @@ export class ApiClient {
       }
     } catch (error) {
       console.error(error);
-      setError(error.response?.data, 'error');
+      // setError(error.response?.data, 'error');
       return false;
     }
   }
@@ -67,7 +67,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      // setError(error.response?.data, 'error');
+      // // setError(error.response?.data, 'error');
       return false;
     }
   }
@@ -76,12 +76,12 @@ export class ApiClient {
     try {
       const reponse =await axios.post(handleRoute(RouteEnum.LIKE_LIST), {target_user_id: id});
       if (reponse.status === 201 && reponse.data?.match) {
-          setError({message: 'Vous avez un match !!!'}, 'success');
+          // setError({message: 'Vous avez un match !!!'}, 'success');
       }
       return true;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return false;
     }
   }
@@ -92,7 +92,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return error;
     }
   };
@@ -103,7 +103,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return error;
     }
   };
@@ -115,7 +115,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return error;
     }
   };
@@ -127,12 +127,12 @@ export class ApiClient {
         withCredentials: true
       });
 
-      setError({message: 'L\'utilisateur a été mis à jour'}, 'success');
+      // setError({message: 'L\'utilisateur a été mis à jour'}, 'success');
       localStorage.setItem('uninitialized', false);
       return true;
     } catch (error) {
       console.error(error);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return false;
     }
   }
@@ -141,11 +141,11 @@ export class ApiClient {
     try {
       const response =
           await axios.post(handleRoute(RouteEnum.USER_ADD_TAG), tag);
-      setError(response.data, 'success');
+      // setError(response.data, 'success');
       return true;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return false;
     }
   };
@@ -154,11 +154,11 @@ export class ApiClient {
     try {
       const response = await axios.delete(
           handleRoute(RouteEnum.USER_REMOVE_TAG), {data: tag});
-      setError(response.data, 'success');
+      // setError(response.data, 'success');
       return true;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return false;
     }
   };
@@ -171,7 +171,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return error;
     }
   };
@@ -206,7 +206,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return false;
     }
   }
@@ -218,7 +218,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return false;
     }
   }
@@ -242,7 +242,7 @@ export class ApiClient {
       return `data:image/jpeg;base64,${arrayBufferToBase64(response.data)}`;
     } catch (error) {
       console.error(error);
-      setError("someting went wrong", 'error');
+      // setError("someting went wrong", 'error');
       return error;
     }
   }
@@ -258,7 +258,7 @@ export class ApiClient {
       return response.data.id;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return false;
     }
   }
@@ -269,7 +269,7 @@ export class ApiClient {
       return true;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return false;
     }
   }
@@ -282,7 +282,7 @@ export class ApiClient {
       return response.data;
     } catch (error) {
       console.error(error.response?.data);
-      setError("something went wrong", 'error');
+      // setError("something went wrong", 'error');
       return false;
     }
   }
